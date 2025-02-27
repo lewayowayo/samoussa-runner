@@ -1,0 +1,127 @@
+<!-- Ajoutez ce code CSS dans la section style -->
+
+/* Volets créoles responsives */
+.volet {
+    width: 7%;
+    height: 20%; 
+    max-height: 120px;
+    background-color: #5272a1; 
+    border: 2px solid #444;
+    position: relative;
+    border-radius: 3px;
+    overflow: hidden;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+    aspect-ratio: 0.42; /* Proportion basée sur la capture d'écran */
+}
+
+/* Motif en Z - Barre blanche horizontale du haut */
+.volet::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 16%;
+    top: 10%;
+    left: 0;
+    background-color: white;
+}
+
+/* Barre horizontale du bas */
+.volet-bottom-bar {
+    position: absolute;
+    width: 100%;
+    height: 16%;
+    bottom: 10%;
+    left: 0;
+    background-color: white;
+}
+
+/* Barre diagonale Z */
+.volet-diagonal {
+    position: absolute;
+    width: 100%;
+    height: 16%;
+    top: 42%; 
+    left: 0;
+    background-color: white;
+    transform: rotate(32deg) scale(1.4, 1);
+    transform-origin: center;
+}
+
+/* Media queries pour les différentes tailles d'écran */
+@media (max-width: 767px) {
+    .volet {
+        width: 10%;
+        max-height: 100px;
+    }
+}
+
+<!-- Remplacez la fonction setupDecorativeElements par celle-ci -->
+<script>
+function setupDecorativeElements() {
+    // Créer 2 volets à des positions adaptées à l'écran
+    const volet1 = createDecorativeElement('volet', 25, 35);
+    const volet2 = createDecorativeElement('volet', 75, 35);
+    
+    // Ajouter la barre diagonale (élément séparé pour mieux contrôler)
+    const diagonal1 = document.createElement('div');
+    diagonal1.className = 'volet-diagonal';
+    volet1.appendChild(diagonal1);
+    
+    const diagonal2 = document.createElement('div');
+    diagonal2.className = 'volet-diagonal';
+    volet2.appendChild(diagonal2);
+}
+
+/* Nouvelle fonction pour ajuster les volets selon la taille de l'écran */
+function adjustVoletsForScreenSize() {
+    const isMobileView = window.innerWidth < 768 || (window.innerWidth / window.innerHeight < 1);
+    
+    // Sélectionner tous les volets
+    const volets = document.querySelectorAll('.volet');
+    
+    volets.forEach(volet => {
+        if (isMobileView) {
+            // Spécifique pour mobile - volets plus carrés
+            volet.style.width = '10%';
+            volet.style.height = '20%';
+            volet.style.maxHeight = '100px';
+        } else {
+            // Desktop - volets plus rectangulaires
+            volet.style.width = '7%';
+            volet.style.height = '20%';
+            volet.style.maxHeight = '120px';
+        }
+    });
+}
+
+// Modifiez la fonction resizeGame pour inclure l'appel à adjustVoletsForScreenSize
+function resizeGame() {
+    gameContainerWidth = gameContainer.clientWidth;
+    const groundHeight = gameContainer.clientHeight * 0.15;
+    initialSamoussaBottom = groundHeight;
+    
+    // Mettre à jour la taille/position du samoussa
+    samoussa.style.bottom = groundHeight + 'px';
+    
+    // Recalculer les obstacles
+    obstacles.forEach(obstacle => {
+        obstacle.element.style.bottom = groundHeight + 'px';
+    });
+    
+    // Adapter les valeurs de saut en fonction de la taille
+    jumpHeight = gameContainer.clientHeight * 0.4;
+    
+    // Ajuster les volets pour le mobile si nécessaire
+    adjustVoletsForScreenSize();
+}
+
+// Ajoutez cet appel dans les event listeners existants
+window.addEventListener('load', function() {
+    resizeGame();
+    adjustVoletsForScreenSize();
+});
+window.addEventListener('resize', function() {
+    resizeGame();
+    adjustVoletsForScreenSize();
+});
+</script>
