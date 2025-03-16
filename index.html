@@ -4475,5 +4475,366 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 })();
 </script>
+    
+    <!-- SOLUTION ULTIME POUR L'INTERACTION EMAIL -->
+<script>
+// Solution définitive pour le formulaire d'email - à ajouter à la fin du fichier
+(function() {
+    console.log("🔧 Initialisation de la solution d'interaction email");
+    
+    // Observer le DOM pour détecter quand le formulaire d'email apparaît
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.addedNodes && mutation.addedNodes.length) {
+                for (let i = 0; i < mutation.addedNodes.length; i++) {
+                    const node = mutation.addedNodes[i];
+                    if (node.id === 'email-overlay' || 
+                        (node.nodeType === 1 && node.querySelector('#email-overlay'))) {
+                        fixEmailOverlay();
+                    }
+                }
+            }
+            
+            // Vérifier si l'email-overlay passe de display:none à display:block
+            if (mutation.target && mutation.target.id === 'email-overlay' && 
+                mutation.attributeName === 'style' &&
+                mutation.target.style.display === 'block') {
+                fixEmailOverlay();
+            }
+        });
+    });
+    
+    observer.observe(document.body, { 
+        childList: true, 
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['style']
+    });
+    
+    // Vérifier immédiatement si l'overlay existe déjà
+    if (document.getElementById('email-overlay')) {
+        fixEmailOverlay();
+    }
+    
+    // Fonction pour corriger le formulaire d'email
+    function fixEmailOverlay() {
+        console.log("🔍 Détection du formulaire d'email - application des correctifs");
+        
+        // 1. Récupérer tous les éléments nécessaires
+        const overlay = document.getElementById('email-overlay');
+        const emailInput = document.getElementById('overlay-email-input');
+        const sendBtn = document.getElementById('send-email-btn');
+        const cancelBtn = document.getElementById('cancel-email-btn');
+        const statusDiv = document.getElementById('overlay-status');
+        
+        if (!overlay || !emailInput || !sendBtn || !cancelBtn) {
+            console.error("❌ Éléments du formulaire non trouvés");
+            return;
+        }
+        
+        // 2. Améliorer le champ email pour faciliter le focus
+        emailInput.autocomplete = "email";
+        emailInput.inputMode = "email";
+        emailInput.autocapitalize = "off";
+        emailInput.autocorrect = "off";
+        emailInput.spellcheck = false;
+        
+        // Style spécifique pour iOS
+        emailInput.style.webkitAppearance = "none";
+        emailInput.style.borderRadius = "8px";
+        emailInput.style.padding = "15px";  // Plus grand pour faciliter le toucher
+        emailInput.style.fontSize = "18px"; // Plus grand pour meilleure visibilité
+        
+        // 3. Corriger les boutons
+        
+        // Style des boutons pour meilleure accessibilité tactile
+        [sendBtn, cancelBtn].forEach(btn => {
+            if (!btn) return;
+            
+            // Créer un nouveau bouton pour remplacer l'ancien (éliminer tous les handlers)
+            const newBtn = document.createElement('button');
+            newBtn.id = btn.id;
+            newBtn.textContent = btn.textContent;
+            newBtn.className = btn.className;
+            
+            // Styles pour meilleure accessibilité tactile
+            newBtn.style.padding = "16px 24px";
+            newBtn.style.fontSize = "18px";
+            newBtn.style.fontWeight = "bold";
+            newBtn.style.borderRadius = "8px";
+            newBtn.style.border = "none";
+            newBtn.style.userSelect = "none";
+            newBtn.style.webkitTapHighlightColor = "rgba(0,0,0,0)";
+            newBtn.style.cursor = "pointer";
+            
+            // Appliquer les styles spécifiques selon le bouton
+            if (btn.id === 'send-email-btn') {
+                newBtn.style.backgroundColor = "#4A89DC";
+                newBtn.style.color = "white";
+            } else {
+                newBtn.style.backgroundColor = "#555";
+                newBtn.style.color = "white";
+            }
+            
+            // Remplacer l'ancien bouton par le nouveau
+            btn.parentNode.replaceChild(newBtn, btn);
+        });
+        
+        // 4. Récupérer les références aux nouveaux boutons
+        const newSendBtn = document.getElementById('send-email-btn');
+        const newCancelBtn = document.getElementById('cancel-email-btn');
+        
+        // 5. Ajouter tous les gestionnaires d'événements nécessaires
+        
+        // Gestionnaire du bouton annuler
+        if (newCancelBtn) {
+            ["click", "touchend"].forEach(eventType => {
+                newCancelBtn.addEventListener(eventType, function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log("📱 Annuler cliqué");
+                    overlay.style.display = "none";
+                }, true);
+            });
+            
+            // Feedback visuel au toucher
+            newCancelBtn.addEventListener("touchstart", function(e) {
+                this.style.opacity = "0.7";
+            }, { passive: true });
+            
+            newCancelBtn.addEventListener("touchend", function(e) {
+                this.style.opacity = "1";
+            }, { passive: true });
+        }
+        
+        // Gestionnaire du bouton envoyer
+        if (newSendBtn) {
+            ["click", "touchend"].forEach(eventType => {
+                newSendBtn.addEventListener(eventType, function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log("📱 Envoyer cliqué");
+                    
+                    // Appeler la fonction d'envoi si elle existe, sinon utiliser notre fonction
+                    if (typeof window.fixedSendEmailFromOverlay === 'function') {
+                        window.fixedSendEmailFromOverlay();
+                    } else if (typeof sendEmail === 'function') {
+                        sendEmail();
+                    } else if (typeof sendEmailFromOverlay === 'function') {
+                        sendEmailFromOverlay();
+                    } else {
+                        // Fonction de secours si aucune des précédentes n'existe
+                        sendEmailFallback();
+                    }
+                }, true);
+            });
+            
+            // Feedback visuel au toucher
+            newSendBtn.addEventListener("touchstart", function(e) {
+                this.style.opacity = "0.7";
+            }, { passive: true });
+            
+            newSendBtn.addEventListener("touchend", function(e) {
+                this.style.opacity = "1";
+            }, { passive: true });
+        }
+        
+        // Permettre l'envoi via la touche entrée
+        emailInput.addEventListener("keydown", function(e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                console.log("📱 Touche Entrée pressée");
+                
+                // Appeler la fonction d'envoi
+                if (typeof window.fixedSendEmailFromOverlay === 'function') {
+                    window.fixedSendEmailFromOverlay();
+                } else if (typeof sendEmail === 'function') {
+                    sendEmail();
+                } else if (typeof sendEmailFromOverlay === 'function') {
+                    sendEmailFromOverlay();
+                } else {
+                    // Fonction de secours
+                    sendEmailFallback();
+                }
+            }
+        }, true);
+        
+        // 6. Forcer le focus sur le champ email après 300ms
+        setTimeout(() => {
+            console.log("🔍 Tentative de focus sur le champ email");
+            
+            // Tenter plusieurs approches
+            try {
+                // Forcer le focus avec différentes méthodes
+                emailInput.focus();
+                emailInput.click();
+                
+                // Pour iOS, plusieurs astuces
+                if ('ontouchstart' in window) {
+                    emailInput.readOnly = false;
+                    emailInput.blur();
+                    emailInput.focus();
+                    
+                    // Si le champ était vide, mettre un espace puis l'effacer
+                    if (emailInput.value === '') {
+                        emailInput.value = ' ';
+                        setTimeout(() => {
+                            emailInput.value = '';
+                            emailInput.focus();
+                        }, 10);
+                    }
+                }
+            } catch (e) {
+                console.error("Erreur lors du focus:", e);
+            }
+        }, 300);
+        
+        // 7. Fonction de secours pour l'envoi d'email
+        function sendEmailFallback() {
+            console.log("📨 Utilisation de la fonction d'envoi de secours");
+            
+            const email = emailInput.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            // Validation de l'email
+            if (!emailRegex.test(email)) {
+                if (statusDiv) {
+                    statusDiv.textContent = "Email invalide";
+                    statusDiv.style.display = "block";
+                    statusDiv.style.color = "#e74c3c";
+                }
+                return;
+            }
+            
+            // Afficher l'état de chargement
+            if (statusDiv) {
+                statusDiv.textContent = "Envoi en cours...";
+                statusDiv.style.display = "block";
+                statusDiv.style.color = "#f39c12";
+            }
+            
+            // Extraire les données du QR code
+            let code = '';
+            document.querySelectorAll('*').forEach(el => {
+                if (el.textContent && el.textContent.includes('WY-') && el.textContent.includes('K-')) {
+                    const match = el.textContent.match(/WY-\d+K-[a-zA-Z0-9]+/);
+                    if (match && !code) {
+                        code = match[0];
+                    }
+                }
+            });
+            
+            // URL du script Google Apps Script
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbxozeZtrpTn6EUNmuU-UZpPeR6Rxq3yRG1yiVTbJNpVrJwBl_DsfSdH-qj0OQi9n-xq/exec';
+            
+            // Créer une iframe invisible
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+            
+            // Créer un formulaire à l'intérieur
+            const form = iframe.contentDocument.createElement('form');
+            form.method = 'POST';
+            form.action = scriptURL;
+            
+            // Ajouter les champs
+            const fields = {
+                'action': 'sendQRCodeEmail',
+                'email': email,
+                'code': code || 'CODE_NON_TROUVE',
+                'reward': '1 portion de samoussas offerte',
+                'expiry': new Date().toLocaleDateString('fr-FR', {year: 'numeric', month: '2-digit', day: '2-digit'}),
+                'score': document.getElementById('final-score')?.textContent || '0',
+                'level': document.getElementById('final-level')?.textContent || '5'
+            };
+            
+            for (const key in fields) {
+                const input = iframe.contentDocument.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = fields[key];
+                form.appendChild(input);
+            }
+            
+            // Soumettre le formulaire
+            iframe.contentDocument.body.appendChild(form);
+            form.submit();
+            
+            console.log("📨 Formulaire soumis avec les données:", fields);
+            
+            // Sauvegarder l'email
+            try {
+                localStorage.setItem('wayowayoUserEmail', email);
+            } catch (e) {
+                console.warn("Erreur localStorage:", e);
+            }
+            
+            // Afficher le succès
+            if (statusDiv) {
+                statusDiv.textContent = "Email envoyé avec succès !";
+                statusDiv.style.display = "block";
+                statusDiv.style.color = "#2ecc71";
+            }
+            
+            // Fermer l'overlay après 2 secondes
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                
+                // Nettoyer l'iframe
+                setTimeout(() => {
+                    if (iframe && iframe.parentNode) {
+                        iframe.parentNode.removeChild(iframe);
+                    }
+                }, 1000);
+            }, 2000);
+        }
+    }
+    
+    // Pour les écrans game-over, nettoyer les boutons dupliqués
+    function cleanupGameOverButtons() {
+        const gameOver = document.getElementById('game-over');
+        if (!gameOver) return;
+        
+        // Observer les changements sur l'écran game-over
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.attributeName === 'style' && 
+                    gameOver.style.display !== 'none') {
+                    
+                    // Éliminer les boutons Rejouer en double
+                    const replayButtons = document.querySelectorAll('#restart-button');
+                    if (replayButtons.length > 1) {
+                        for (let i = 1; i < replayButtons.length; i++) {
+                            if (replayButtons[i] && replayButtons[i].parentNode) {
+                                replayButtons[i].parentNode.removeChild(replayButtons[i]);
+                            }
+                        }
+                    }
+                    
+                    // Appliquer la logique conditionnelle pour afficher ou masquer le bouton email
+                    const emailButtons = document.querySelectorAll('.email-button, #email-button');
+                    const level = parseInt(document.getElementById('final-level')?.textContent || '0');
+                    
+                    emailButtons.forEach(button => {
+                        if (level < 5) {
+                            if (button.style) button.style.display = 'none';
+                        } else {
+                            if (button.style) button.style.display = 'block';
+                        }
+                    });
+                }
+            });
+        });
+        
+        observer.observe(gameOver, { attributes: true });
+    }
+    
+    // Exécuter le nettoyage des boutons dupliqués
+    cleanupGameOverButtons();
+    
+    console.log("✅ Solution d'interaction email chargée avec succès");
+})();
+</script>
+    
 </body>
 </html>
