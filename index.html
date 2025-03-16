@@ -3661,27 +3661,59 @@ function gameLoop(timestamp) {
             const restartButton = document.getElementById('restart-button');
             gameOverScreen.insertBefore(rewardSection, restartButton);
         }
-    } else {
-        // Pour les niveaux inférieurs, afficher seulement les meilleurs scores
-        const scoresSection = document.createElement('div');
-        scoresSection.className = 'reward-section';
-        scoresSection.innerHTML = `
-            <h4 style="color: #FFD700; margin-top: 5px; margin-bottom: 10px;">Meilleurs scores:</h4>
-            <ol style="text-align: left; padding-left: 25px; margin-top: 5px;">
-                ${highScores.map(score => `<li>${score}</li>`).join('')}
-            </ol>
-            <p class="reward-text" style="margin-top: 15px;">Atteignez le niveau 5 pour gagner une récompense!</p>
-        `;
+     else {
+    // Pour les niveaux inférieurs, afficher seulement les meilleurs scores
+    const scoresSection = document.createElement('div');
+    scoresSection.className = 'reward-section';
+    scoresSection.innerHTML = `
+        <h4 style="color: #FFD700; margin-top: 5px; margin-bottom: 10px;">Meilleurs scores:</h4>
+        <ol style="text-align: left; padding-left: 25px; margin-top: 5px;">
+            ${highScores.map(score => `<li>${score}</li>`).join('')}
+        </ol>
+        <p class="reward-text" style="margin-top: 15px;">Atteignez le niveau 5 pour gagner une récompense!</p>
+    `;
+    
+    // Insérer avant le bouton de restart
+    const restartButton = document.getElementById('restart-button');
+    gameOverScreen.insertBefore(scoresSection, restartButton);
+}
+
+// Masquer explicitement tout bouton d'email si le niveau est inférieur à 5
+if (difficultyLevel < 5) {
+    setTimeout(() => {
+        // Masquer les boutons d'email par classe et attribut id
+        document.querySelectorAll('.email-button, [id^="email-"], [id*="email"]').forEach(button => {
+            if (button) button.style.display = 'none';
+        });
         
-        // Insérer avant le bouton de restart
-        const restartButton = document.getElementById('restart-button');
-        gameOverScreen.insertBefore(scoresSection, restartButton);
-    }
+        // Masquer aussi les boutons qui contiennent le texte "EMAIL"
+        document.querySelectorAll('button').forEach(button => {
+            if (button && button.textContent && button.textContent.includes('EMAIL')) {
+                button.style.display = 'none';
+            }
+        });
+    }, 300);
+}
     
     setTimeout(() => {
         gameOverScreen.style.display = 'flex';
     }, 500);
     
+        // Nettoyer les boutons en double
+setTimeout(() => {
+    // Éliminer les boutons REJOUER en double
+    const replayButtons = document.querySelectorAll('#restart-button, .btn');
+    if (replayButtons.length > 1) {
+        for (let i = 1; i < replayButtons.length; i++) {
+            if (replayButtons[i] && replayButtons[i].textContent.includes('REJOUER') && i > 0) {
+                if (replayButtons[i].parentNode) {
+                    replayButtons[i].parentNode.removeChild(replayButtons[i]);
+                }
+            }
+        }
+    }
+}, 600);
+        
     setTimeout(() => {
         // Si le niveau 5+ est atteint et QR code affiché, ajouter un petit bouton rejeu flottant
         if (difficultyLevel >= 5) {
@@ -4060,32 +4092,6 @@ document.addEventListener('DOMContentLoaded', function() {
     observer.observe(gameOverScreen, { attributes: true });
 });
     </script>
-<!-- Système d'email complet et optimisé -->
-<div id="email-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); z-index: 2000;">
-  <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-width: 400px; background-color: #333; border-radius: 12px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.5);">
-    <h3 style="color: #FFD700; text-align: center; margin-top: 0;">Recevoir votre code</h3>
-    
-    <p style="color: white; text-align: center; margin-bottom: 20px;">
-      Saisissez votre email pour recevoir votre code QR
-    </p>
-    
-    <input type="email" id="overlay-email-input" placeholder="Votre email" 
-      style="width: 100%; padding: 12px; border-radius: 6px; border: none; margin-bottom: 15px; font-size: 16px; box-sizing: border-box;" />
-    
-    <div style="display: flex; gap: 10px;">
-      <button id="cancel-email-btn" 
-        style="flex: 1; padding: 12px; background-color: #555; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold;">
-        Annuler
-      </button>
-      <button id="send-email-btn" 
-        style="flex: 1; padding: 12px; background-color: #4A89DC; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold;">
-        Envoyer
-      </button>
-    </div>
-    
-    <div id="overlay-status" style="margin-top: 15px; text-align: center; display: none;"></div>
-  </div>
-</div>
 
 <script>
 // Système d'email complet - Version finale optimisée
@@ -4834,6 +4840,256 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log("✅ Solution d'interaction email chargée avec succès");
 })();
+</script>
+    <!-- Overlay optimisé pour l'email -->
+<div id="email-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); z-index: 2000;">
+  <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-width: 400px; background-color: #333; border-radius: 12px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.5);">
+    <h3 style="color: #FFD700; text-align: center; margin-top: 0;">Recevoir votre code</h3>
+    
+    <p style="color: white; text-align: center; margin-bottom: 20px;">
+      Saisissez votre email pour recevoir votre code QR
+    </p>
+    
+    <input type="email" id="overlay-email-input" placeholder="Votre email" autocomplete="email" inputmode="email"
+      style="width: 100%; padding: 15px; border-radius: 8px; border: none; margin-bottom: 15px; font-size: 18px; box-sizing: border-box; -webkit-appearance: none;" />
+    
+    <div style="display: flex; gap: 10px;">
+      <button id="cancel-email-btn" 
+        style="flex: 1; padding: 16px 24px; background-color: #555; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer;">
+        Annuler
+      </button>
+      <button id="send-email-btn" 
+        style="flex: 1; padding: 16px 24px; background-color: #4A89DC; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer;">
+        Envoyer
+      </button>
+    </div>
+    
+    <div id="overlay-status" style="margin-top: 15px; text-align: center; display: none; padding: 10px; border-radius: 6px; font-size: 16px;"></div>
+  </div>
+</div>
+
+<script>
+// Système d'email simplifié et robuste
+document.addEventListener('DOMContentLoaded', function() {
+    // Gérer le bouton d'annulation
+    const cancelBtn = document.getElementById('cancel-email-btn');
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', function() {
+            document.getElementById('email-overlay').style.display = 'none';
+        });
+    }
+    
+    // Gérer le bouton d'envoi
+    const sendBtn = document.getElementById('send-email-btn');
+    if (sendBtn) {
+        sendBtn.addEventListener('click', function() {
+            sendEmailSimple();
+        });
+    }
+    
+    // Permettre l'envoi via la touche Entrée
+    const emailInput = document.getElementById('overlay-email-input');
+    if (emailInput) {
+        emailInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                sendEmailSimple();
+            }
+        });
+    }
+    
+    // Écouter les clics sur les boutons d'email
+    document.addEventListener('click', function(e) {
+        if (e.target && 
+            (e.target.id === 'email-button' || 
+             (e.target.className && e.target.className.includes('email-button')) ||
+             (e.target.textContent && e.target.textContent.includes('email')))) {
+            
+            collectQRData();
+            document.getElementById('email-overlay').style.display = 'block';
+            
+            setTimeout(function() {
+                document.getElementById('overlay-email-input').focus();
+            }, 300);
+        }
+    });
+});
+
+// Fonction pour collecter les données du QR code
+function collectQRData() {
+    // Récupérer le code QR
+    let code = '';
+    const codeElement = document.querySelector('.code-text');
+    if (codeElement) {
+        code = codeElement.textContent.replace('Code:', '').trim();
+    }
+    
+    // Si pas trouvé, essayer une recherche plus large
+    if (!code) {
+        document.querySelectorAll('*').forEach(function(el) {
+            if (el.textContent && el.textContent.includes('WY-') && 
+                el.textContent.includes('K-') && !code) {
+                
+                const match = el.textContent.match(/WY-\d+K-[a-zA-Z0-9]+/);
+                if (match) {
+                    code = match[0];
+                }
+            }
+        });
+    }
+    
+    // Récupérer la récompense
+    let reward = '';
+    const rewardElement = document.querySelector('.reward-text strong');
+    if (rewardElement) {
+        reward = rewardElement.textContent;
+    } else {
+        // Récompense par défaut selon le niveau
+        const level = document.getElementById('final-level') ? 
+                     document.getElementById('final-level').textContent : '5';
+        
+        switch (level) {
+            case '5': reward = '1 portion de samoussas offerte'; break;
+            case '6': reward = '2 portions de samoussas offertes'; break;
+            case '7': reward = '4 portions de samoussas offertes'; break;
+            case '8': reward = '1 repas complet pour 2 offert'; break;
+            case '9': reward = '1 an de samoussas offerts'; break;
+            default: reward = '1 portion de samoussas offerte';
+        }
+    }
+    
+    // Stocker pour utilisation ultérieure
+    window.qrData = {
+        code: code,
+        reward: reward,
+        expiry: document.querySelector('.expiry') ? 
+                document.querySelector('.expiry').textContent.replace('Valable jusqu\'au', '').trim() : '',
+        score: document.getElementById('final-score') ? 
+              document.getElementById('final-score').textContent : '',
+        level: document.getElementById('final-level') ? 
+              document.getElementById('final-level').textContent : ''
+    };
+    
+    // Pré-remplir l'email s'il est sauvegardé
+    const savedEmail = localStorage.getItem('wayowayoUserEmail');
+    if (savedEmail) {
+        document.getElementById('overlay-email-input').value = savedEmail;
+    }
+}
+
+// Fonction simplifiée pour envoyer l'email
+function sendEmailSimple() {
+    const emailInput = document.getElementById('overlay-email-input');
+    const statusDiv = document.getElementById('overlay-status');
+    
+    // Valider l'email
+    const email = emailInput.value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (!emailRegex.test(email)) {
+        statusDiv.textContent = "Email invalide";
+        statusDiv.style.display = "block";
+        statusDiv.style.color = "#e74c3c";
+        statusDiv.style.backgroundColor = "rgba(231, 76, 60, 0.2)";
+        return;
+    }
+    
+    // Afficher l'état d'envoi
+    statusDiv.textContent = "Envoi en cours...";
+    statusDiv.style.display = "block";
+    statusDiv.style.color = "#f39c12";
+    statusDiv.style.backgroundColor = "rgba(243, 156, 18, 0.2)";
+    
+    // URL du script Google Apps Script
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxozeZtrpTn6EUNmuU-UZpPeR6Rxq3yRG1yiVTbJNpVrJwBl_DsfSdH-qj0OQi9n-xq/exec';
+    
+    try {
+        // Créer une iframe invisible pour le formulaire
+        const iframeId = 'email-form-iframe';
+        let iframe = document.getElementById(iframeId);
+        
+        if (!iframe) {
+            iframe = document.createElement('iframe');
+            iframe.id = iframeId;
+            iframe.name = iframeId;
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+        }
+        
+        // Créer un formulaire
+        const formId = 'email-submit-form';
+        let form = document.getElementById(formId);
+        
+        if (form) {
+            document.body.removeChild(form);
+        }
+        
+        form = document.createElement('form');
+        form.id = formId;
+        form.action = scriptURL;
+        form.method = 'POST';
+        form.target = iframeId;
+        form.style.display = 'none';
+        
+        // Ajouter les champs au formulaire
+        const addField = function(name, value) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = name;
+            input.value = value || '';
+            form.appendChild(input);
+        };
+        
+        // Utiliser les données stockées
+        const data = window.qrData || {};
+        
+        addField('action', 'sendQRCodeEmail');
+        addField('email', email);
+        addField('code', data.code || 'CODE_NON_TROUVE');
+        addField('reward', data.reward || '1 portion de samoussas offerte');
+        addField('expiry', data.expiry || '');
+        addField('score', data.score || '0');
+        addField('level', data.level || '5');
+        
+        // Ajouter le formulaire au document
+        document.body.appendChild(form);
+        
+        // Soumettre le formulaire
+        form.submit();
+        
+        console.log("Formulaire soumis avec succès", {
+            email: email,
+            code: data.code,
+            reward: data.reward,
+            level: data.level
+        });
+        
+        // Sauvegarder l'email
+        try {
+            localStorage.setItem('wayowayoUserEmail', email);
+        } catch (e) {
+            console.error("Erreur localStorage:", e);
+        }
+        
+        // Afficher succès
+        statusDiv.textContent = "Email envoyé avec succès !";
+        statusDiv.style.display = "block";
+        statusDiv.style.color = "#2ecc71";
+        statusDiv.style.backgroundColor = "rgba(46, 204, 113, 0.2)";
+        
+        // Fermer après 2 secondes
+        setTimeout(function() {
+            document.getElementById('email-overlay').style.display = 'none';
+        }, 2000);
+        
+    } catch (error) {
+        console.error("Erreur lors de l'envoi:", error);
+        
+        statusDiv.textContent = "Erreur lors de l'envoi. Veuillez réessayer.";
+        statusDiv.style.display = "block";
+        statusDiv.style.color = "#e74c3c";
+        statusDiv.style.backgroundColor = "rgba(231, 76, 60, 0.2)";
+    }
+}
 </script>
     
 </body>
