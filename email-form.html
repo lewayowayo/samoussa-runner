@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Recevoir mon code WAYOWAYO</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #222;
+            color: white;
+        }
+        h1 {
+            color: #FFD700;
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+        form {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        input, button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4A89DC;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .success {
+            background-color: #27ae60;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+            text-align: center;
+            display: none;
+        }
+        .error {
+            background-color: #e74c3c;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+            text-align: center;
+            display: none;
+        }
+        .logo {
+            max-width: 120px;
+            margin: 0 auto 20px auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <img src="assets/ww.png" alt="WAYOWAYO" class="logo">
+    <h1>Recevoir mon code WAYOWAYO</h1>
+    
+    <form id="emailForm">
+        <input type="email" id="email" placeholder="Votre adresse email" required>
+        <input type="hidden" id="code" name="code">
+        <input type="hidden" id="reward" name="reward">
+        <input type="hidden" id="expiry" name="expiry">
+        <input type="hidden" id="score" name="score">
+        <input type="hidden" id="level" name="level">
+        
+        <button type="submit">Envoyer</button>
+        
+        <div id="success" class="success">Email envoyé avec succès!</div>
+        <div id="error" class="error">Erreur: veuillez réessayer</div>
+    </form>
+
+    <script>
+        // Récupérer les paramètres de l'URL
+        const urlParams = new URLSearchParams(window.location.search);
+        document.getElementById('code').value = urlParams.get('code') || '';
+        document.getElementById('reward').value = urlParams.get('reward') || '';
+        document.getElementById('expiry').value = urlParams.get('expiry') || '';
+        document.getElementById('score').value = urlParams.get('score') || '';
+        document.getElementById('level').value = urlParams.get('level') || '';
+        
+        // Tenter de remplir l'email depuis localStorage
+        try {
+            const savedEmail = localStorage.getItem('wayowayoUserEmail');
+            if (savedEmail) {
+                document.getElementById('email').value = savedEmail;
+            }
+        } catch(e) {}
+        
+        // Gestionnaire de formulaire
+        document.getElementById('emailForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const code = document.getElementById('code').value;
+            const reward = document.getElementById('reward').value;
+            const expiry = document.getElementById('expiry').value; 
+            const score = document.getElementById('score').value;
+            const level = document.getElementById('level').value;
+            
+            // Sauvegarder l'email
+            try {
+                localStorage.setItem('wayowayoUserEmail', email);
+            } catch(e) {}
+            
+            // Créer un formulaire pour l'envoi au script Google
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'https://script.google.com/macros/s/AKfycbxozeZtrpTn6EUNmuU-UZpPeR6Rxq3yRG1yiVTbJNpVrJwBl_DsfSdH-qj0OQi9n-xq/exec';
+            form.target = '_blank';
+            form.style.display = 'none';
+            
+            // Ajouter tous les champs
+            const fields = {
+                'action': 'sendQRCodeEmail',
+                'email': email,
+                'code': code,
+                'reward': reward,
+                'expiry': expiry,
+                'score': score,
+                'level': level
+            };
+            
+            for (const key in fields) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = fields[key];
+                form.appendChild(input);
+            }
+            
+            // Soumettre le formulaire
+            document.body.appendChild(form);
+            form.submit();
+            
+            // Afficher confirmation
+            document.getElementById('success').style.display = 'block';
+            
+            // Rediriger après un délai
+            setTimeout(() => {
+                window.close();
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
