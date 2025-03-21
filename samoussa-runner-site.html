@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Samoussa Runner - WAYOWAYO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'Ethnocentric';
+            src: url('https://db.onlinewebfonts.com/t/2549a306e114c56bd591bb8cb66673e4.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'DeathRattle';
+            src: url('https://db.onlinewebfonts.com/t/6df55ee46a9d0e10a696dac70b37f6e5.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'SummerLoving';
+            src: url('https://db.onlinewebfonts.com/t/95cbb52c7cc1e1b9a8bfb8a3d9efcfb2.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'VagRounded';
+            src: url('https://db.onlinewebfonts.com/t/99cca62d1dd0b424fa117f8976c5d0ac.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'StickAround';
+            src: url('https://db.onlinewebfonts.com/t/13b003e481d03634c367999f40300b5d.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            --noir-wayo: #2B2B2F;
+            --sable-wayo: #DEDEC0;
+            --rouge-lave: #C63D47;
+            --vert-dodo: #127859;
+            --jaune-dodo: #FAC22E;
+            --neon-blue: #0ff;
+            --neon-pink: #f0f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'VagRounded', 'Roboto', sans-serif;
+            background-color: var(--noir-wayo);
+            color: white;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(43, 43, 47, 0.9) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(43, 43, 47, 0.9) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -1;
+            perspective: 1000px;
+            transform-style: preserve-3d;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% {
+                transform: translateZ(0) translateY(0);
+            }
+            100% {
+                transform: translateZ(0) translateY(40px);
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            padding: 40px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .wayowayo-logo {
+            max-width: 150px;
+            margin-bottom: 30px;
+        }
+
+        .game-title {
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .game-title h1 {
+            font-size: 0;
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+
+        .samoussa-text {
+            font-family: 'Ethnocentric', sans-serif;
+            font-size: 5rem;
+            display: inline-block;
+            color: transparent;
+            text-shadow: 
+                0 0 10px rgba(0, 255, 255, 0.8),
+                0 0 20px rgba(0, 255, 255, 0.8),
+                0 0 30px var(--neon-blue),
+                0 0 40px var(--neon-blue);
+            -webkit-text-stroke: 2px var(--neon-blue);
+            filter: drop-shadow(0 0 10px var(--neon-blue));
+            margin-right: 10px;
+        }
+
+        .runner-text {
+            font-family: 'DeathRattle', cursive;
+            font-size: 5rem;
+            display: inline-block;
+            color: transparent;
+            text-shadow: 
+                0 0 10px rgba(255, 0, 255, 0.8),
+                0 0 20px rgba(255, 0, 255, 0.8),
+                0 0 30px var(--neon-pink),
+                0 0 40px var(--neon-pink);
+            -webkit-text-stroke: 2px var(--neon-pink);
+            filter: drop-shadow(0 0 10px var(--neon-pink));
+        }
+
+        section {
+            padding: 60px 0;
+            position: relative;
+        }
+
+        .section-title {
+            font-family: 'StickAround', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            color: var(--sable-wayo);
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 4px;
+            background-color: var(--rouge-lave);
+            margin: 10px auto;
+        }
+
+        .intro {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+        }
+
+        .intro-text {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .intro-image {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+        }
+
+        .intro-image img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        .gameplay {
+            background-color: rgba(18, 120, 89, 0.1);
+            border-top: 2px solid var(--vert-dodo);
+            border-bottom: 2px solid var(--vert-dodo);
+        }
+
+        .instructions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .instruction-card {
+            flex: 1;
+            min-width: 250px;
+            max-width: 350px;
+            background-color: rgba(43, 43, 47, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--sable-wayo);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .instruction-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .instruction-card i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--jaune-dodo);
+        }
+
+        .instruction-card h3 {
+            font-family: 'StickAround', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--sable-wayo);
+        }
+
+        .game-elements {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .element-category {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .element-category h3 {
+            font-family: 'StickAround', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--jaune-dodo);
+            text-align: center;
+        }
+
+        .elements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 20px;
+        }
+
+        .element-item {
+            background-color: rgba(222, 222, 192, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .element-item:hover {
+            transform: scale(1.05);
+        }
+
+        .element-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+
+        .element-item h4 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .element-item p {
+            font-size: 0.8rem;
+            color: var(--sable-wayo);
+        }
+
+        .rewards {
+            background-color: rgba(198, 61, 71, 0.1);
+            border-top: 2px solid var(--rouge-lave);
+            border-bottom: 2px solid var(--rouge-lave);
+        }
+
+        .rewards-intro {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 40px;
+        }
+
+        .rewards-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(250, 194, 46, 0.3);
+        }
+
+        .rewards-table th {
+            background-color: var(--noir-wayo);
+            color: var(--jaune-dodo);
+            padding: 15px;
+            text-align: left;
+            font-family: 'StickAround', sans-serif;
+        }
+
+        .rewards-table td {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            color: var(--noir-wayo);
+        }
+
+        .rewards-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .rewards-table tr:nth-child(even) {
+            background-color: rgba(222, 222, 192, 0.3);
+        }
+
+        .rewards-table tr:hover {
+            background-color: rgba(250, 194, 46, 0.2);
+        }
+
+        .pwa-install {
+            text-align: center;
+        }
+
+        .install-steps {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .install-step {
+            flex: 1;
+            min-width: 250px;
+            max-width: 300px;
+            background-color: rgba(43, 43, 47, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .install-step .step-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background-color: var(--jaune-dodo);
+            color: var(--noir-wayo);
+            border-radius: 50%;
+            line-height: 40px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-pink));
+            color: white;
+            font-family: 'StickAround', sans-serif;
+            font-size: 1.5rem;
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            margin-top: 40px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.3),
+                0 0 20px rgba(0, 255, 255, 0.5),
+                0 0 40px rgba(255, 0, 255, 0.5);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 
+                0 10px 20px rgba(0, 0, 0, 0.4),
+                0 0 30px rgba(0, 255, 255, 0.8),
+                0 0 50px rgba(255, 0, 255, 0.8);
+        }
+
+        .screenshots {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .screenshot {
+            flex: 1;
+            min-width: 250px;
+            max-width: 350px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .screenshot img {
+            width: 100%;
+            height: auto;
+            transition: transform 0.5s;
+        }
+
+        .screenshot:hover img {
+            transform: scale(1.05);
+        }
+
+        footer {
+            background-color: var(--noir-wayo);
+            color: var(--sable-wayo);
+            padding: 40px 0;
+            border-top: 2px solid var(--jaune-dodo);
+        }
+
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 40px;
+        }
+
+        .footer-logo {
+            flex: 1;
+            min-width: 200px;
+            max-width: 300px;
+        }
+
+        .footer-logo img {
+            max-width: 150px;
+            margin-bottom: 20px;
+        }
+
+        .footer-links, .footer-locations {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .footer-title {
+            font-family: 'StickAround', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--jaune-dodo);
+        }
+
+        .footer-locations ul {
+            list-style: none;
+        }
+
+        .footer-locations li {
+            margin-bottom: 10px;
+        }
+
+        .copyright {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: rgba(222, 222, 192, 0.6);
+        }
+
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .floating-element {
+            position: absolute;
+            opacity: 0.2;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(10deg);
+            }
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .samoussa-text, .runner-text {
+                font-size: 3rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .instruction-card, .element-category, .install-step {
+                min-width: 100%;
+            }
+            
+            .elements-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .samoussa-text, .runner-text {
+                font-size: 2rem;
+                display: block;
+                margin: 0 0 10px 0;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .elements-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Éléments visuels décoratifs supplémentaires */
+        .decoration {
+            position: absolute;
+            z-index: -1;
+            opacity: 0.2;
+        }
+
+        .deco-1 {
+            top: 10%;
+            left: 5%;
+            transform: rotate(-15deg);
+        }
+
+        .deco-2 {
+            top: 30%;
+            right: 5%;
+            transform: rotate(15deg);
+        }
+
+        .deco-3 {
+            bottom: 20%;
+            left: 10%;
+            transform: rotate(30deg);
+        }
+
+        /* Animation pour le titre */
+        @keyframes neonFlicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                text-shadow: 
+                    0 0 10px rgba(0, 255, 255, 0.8),
+                    0 0 20px rgba(0, 255, 255, 0.8),
+                    0 0 30px var(--neon-blue),
+                    0 0 40px var(--neon-blue);
+                filter: drop-shadow(0 0 10px var(--neon-blue));
+            }
+            20%, 24%, 55% {
+                text-shadow: none;
+                filter: none;
+            }
+        }
+
+        @keyframes neonFlickerPink {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                text-shadow: 
+                    0 0 10px rgba(255, 0, 255, 0.8),
+                    0 0 20px rgba(255, 0, 255, 0.8),
+                    0 0 30px var(--neon-pink),
+                    0 0 40px var(--neon-pink);
+                filter: drop-shadow(0 0 10px var(--neon-pink));
+            }
+            20%, 24%, 55% {
+                text-shadow: none;
+                filter: none;
+            }
+        }
+
+        .samoussa-text {
+            animation: neonFlicker 3s infinite alternate-reverse;
+        }
+
+        .runner-text {
+            animation: neonFlickerPink 3s infinite alternate-reverse;
+        }
+
+        /* Pixelated images effect */
+        .pixel-effect {
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="grid-bg"></div>
+    
+    <header>
+        <div class="container">
+            <img src="https://lewayowayo.github.io/samoussa-runner/assets/ww.png" alt="WAYOWAYO" class="wayowayo-logo">
+            <div class="game-title">
+                <h1>
+                    <span class="samoussa-text">SAMOUSSA</span>
+                    <span class="runner-text">RUNNER</span>
+                </h1>
+            </div>
+        </div>
+    </header>
+
+    <section id="intro">
+        <div class="container">
+            <h2 class="section-title">Un jeu savoureux et addictif !</h2>
+            <div class="intro">
+                <div class="intro-text">
+                    <p>Aidez le samoussa à éviter les obstacles et à collecter les épices dans ce jeu de type endless runner au style rétro. Courez à travers un décor inspiré de l'île de La Réunion, sautez par-dessus les obstacles et collectez les bonus pour augmenter votre score !</p>
+                    <p>Atteignez les niveaux supérieurs pour gagner de véritables récompenses à échanger dans les restaurants WAYOWAYO !</p>
+                </div>
+                <div class="intro-image">
+                    <img src="https://lewayowayo.github.io/samoussa-runner/assets/ww.png" alt="Samoussa Runner Gameplay" class="pixel-effect">
+                </div>
+            </div>
+        </div>
+        <div class="floating-elements">
+            <img src="https://lewayowayo.github.io/samoussa-runner/assets/samoussa_run1.png" alt="" class="floating-element" style="top: 20%; left: 10%; width: 80px;">
+            <img src="https://lewayowayo.github.io/samoussa-runner/assets/epice.png" alt="" class="floating-element" style="top: 60%; right: 15%; width: 60px;">
+        </div>
+    </section>
+
+    <section id="gameplay" class="gameplay">
+        <div class="container">
+            <h2 class="section-title">Comment jouer</h2>
+            <div class="instructions">
+                <div class="instruction-card">
+                    <i class="fas fa-hand-pointer"></i>
+                    <h3>Sauter</h3>
+                    <p>Tapez sur l'écran pour faire sauter le samoussa par-dessus les obstacles.</p>
+                </div>
+                <div class="instruction-card">
+                    <i class="fas fa-hand-paper"></i>
+                    <h3>Sauter plus haut</h3>
+                    <p>Maintenez votre doigt appuyé pour charger un saut plus puissant et aller plus haut.</p>
+                </div>
+                <div class="instruction-card">
+                    <i class="fas fa-star"></i>
+                    <h3>Collecter les bonus</h3>
+                    <p>Ramassez les épices et les piments pour augmenter votre score. Attrapez la bière Dodo pour devenir temporairement invincible !</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="elements">
+        <div class="container">
+            <h2 class="section-title">Éléments du jeu</h2>
+            <div class="game-elements">
+                <div class="element-category">
+                    <h3>Personnage & Bonus</h3>
+                    <div class="elements-grid">
+                        <div class="element-item">
+                            <img src="https://lewayowayo.github.io/samoussa-runner/assets/samoussa_run1.png" alt="Samoussa" class="pixel-effect">
+                            <h4>Samoussa</h4>
+                            <p>Notre héros savoureux !</p>
+                        </div>
+                        <div class="element-item">
+                            <img src="https://lewayowayo.github.io/samoussa-runner/assets/piment.png" alt="Piment" class="pixel-effect">
+                            <h4>Piment</h4>
+                            <p>+15 points</p>
+                        </div>
+                        <div class="element-item">
+                            <img src="https://lewayowayo.github.io/samoussa-runner/assets/epice.png" alt="Épice" class="pixel-effect">
+                            <h4>Épice</h4>
+                            <p>+10 points</p>
+                        </div>
+                        <div class="element-item">
+                            <img src="https://lewayowayo.github.io/samoussa-runner/assets/biere_dodo.png" alt="Bière Dodo" class="pixel-effect">
+                            <h4>Bière Dodo</h4>
+                            <p>Invincibilité temporaire</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="element-category">
+                    <h3>Obstacles</h3>
+                    <div class="elements-grid">
+                        <div class="element-item">
+                            <img src="https://lewayowayo.github.io/samoussa-runner/assets/couteau.png" alt="Couteau" class="pixel-effect">
+                            <h4>Couteau</h4>
+                            <p>À éviter à tout prix !</p>
+                        </div>
+                        <div class="element-item">
+                            <img src="https://lewayowayo.github.io/samoussa-runner/assets/marmite.png" alt="Marmite" class="pixel-effect">
+                            <h4>Marmite</h4>
+                            <p>Attention, c'est chaud !</p>
+                        </div>
+                        <div class="element-item">
+                            <img src="https://lewayowayo.github.io/samoussa-runner/assets/main.png" alt="Main" class="pixel-effect">
+                            <h4>Friteuse</h4>
+                            <p>Sautez pour l'éviter !</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="rewards" class="rewards">
+        <div class="container">
+            <h2 class="section-title">Système de récompenses</h2>
+            <div class="rewards-intro">
+                <p>Jouez, progressez et gagnez de véritables récompenses à utiliser dans les restaurants WAYOWAYO ! Plus vous atteignez un niveau élevé, plus la récompense est importante.</p>
+                <p>Une fois le niveau atteint, un QR code unique est généré. Présentez-le dans n'importe quel restaurant WAYOWAYO pour recevoir votre cadeau !</p>
+            </div>
+            <table class="rewards-table">
+                <thead>
+                    <tr>
+                        <th>Niveau</th>
+                        <th>Score requis</th>
+                        <th>Récompense</th>
+                        <th>Limite par joueur</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1-4</td>
+                        <td>0 - 1499</td>
+                        <td>Aucune récompense</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>1500 - 1999</td>
+                        <td>1 portion de samoussas offerte</td>
+                        <td>2 codes/mois</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>2000 - 2499</td>
+                        <td>2 portions de samoussas offertes</td>
+                        <td>1 code/mois</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>2500 - 2999</td>
+                        <td>4 portions de samoussas offertes</td>
+                        <td>1 code/mois</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>3000 - 3999</td>
+                        <td>1 repas complet pour 2 offert (entrées + plats + desserts + boissons)</td>
+                        <td>1 code/mois</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>4000+</td>
+                        <td>1 an de WAYOWAYO offert (1 repas pour 2 par mois pendant 1 an)</td>
+                        <td>1 code unique</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section id="pwa" class="pwa-install">
+        <div class="container">
+            <h2 class="section-title">Installez le jeu sur votre écran d'accueil</h2>
+            <p>Pour une expérience optimale, installez Samoussa Runner sur l'écran d'accueil de votre smartphone.</p>
+            <div class="install-steps">
+                <div class="install-step">
+                    <div class="step-number">1</div>
+                    <h3>Sur Android</h3>
+                    <p>Ouvrez le menu avec les trois points verticaux et sélectionnez "Ajouter à l'écran d'accueil"</p>
+                </div>
+                <div class="install-step">
+                    <div class="step-number">2</div>
+                    <h3>Sur iOS</h3>
+                    <p>Appuyez sur l'icône de partage puis "Sur l'écran d'accueil"</p>
+                </div>
+                <div class="install-step">
+                    <div class="step-number">3</div>
+                    <h3>Jouer hors ligne</h3>
+                    <p>Une fois installé, vous pourrez jouer même sans connexion internet !</p>
+                </div>
+            </div>
+            <a href="https://lewayowayo.github.io/samoussa-runner/" class="cta-button">JOUER MAINTENANT</a>
+        </div>
+    </section>
+
+    <section id="screenshots">
+        <div class="container">
+            <h2 class="section-title">Captures d'écran</h2>
+            <div class="screenshots">
+                <div class="screenshot">
+                    <img src="https://via.placeholder.com/350x600/2B2B2F/DEDEC0?text=Samoussa+Runner" alt="Écran d'accueil">
+                </div>
+                <div class="screenshot">
+                    <img src="https://via.placeholder.com/350x600/2B2B2F/DEDEC0?text=Gameplay" alt="Gameplay">
+                </div>
+                <div class="screenshot">
+                    <img src="https://via.placeholder.com/350x600/2B2B2F/DEDEC0?text=Game+Over" alt="Game Over">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="https://lewayowayo.github.io/samoussa-runner/assets/ww.png" alt="WAYOWAYO">
+                    <p>Restaurant Créole Réunionnais</p>
+                </div>
+                <div class="footer-locations">
+                    <h3 class="footer-title">Nos restaurants</h3>
+                    <ul>
+                        <li>112 rue Alexis Labro, 33130 Bègles</li>
+                        <li>134 cours de l'Argonne, 33000 Bordeaux</li>
+                        <li>10 esplanade de Pontac, 33000 Bordeaux</li>
+                        <li>12 Avenue Pasteur, 33600 Pessac</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 WAYOWAYO - Tous droits réservés</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Animation de défilement fluide
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Animation des éléments flottants
+        const floatingElements = document.querySelectorAll('.floating-element');
+        floatingElements.forEach(element => {
+            // Animer avec des délais et durées aléatoires
+            const delay = Math.random() * 5;
+            const duration = 10 + Math.random() * 10;
+            element.style.animation = `float ${duration}s infinite ${delay}s`;
+        });
+    </script>
+</body>
+</html>
