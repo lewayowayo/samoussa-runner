@@ -277,6 +277,59 @@
                 window.close();
             }, 3000);
         });
+
+// Ajouter ce bloc à la fin de l'élément <script>, juste après la soumission du formulaire
+
+// Détecter si nous sommes en mode PWA
+const isPWA = window.matchMedia('(display-mode: standalone)').matches;
+
+// Si nous sommes en mode PWA, ajouter un bouton de retour
+if (isPWA) {
+    // Créer un bouton de retour flottant
+    const backButton = document.createElement('button');
+    backButton.textContent = '⬅️ Retour au jeu';
+    backButton.style.position = 'fixed';
+    backButton.style.bottom = '20px';
+    backButton.style.left = '20px';
+    backButton.style.padding = '12px 16px';
+    backButton.style.backgroundColor = '#ff6b6b';
+    backButton.style.color = 'white';
+    backButton.style.border = 'none';
+    backButton.style.borderRadius = '8px';
+    backButton.style.fontSize = '16px';
+    backButton.style.fontWeight = 'bold';
+    backButton.style.cursor = 'pointer';
+    backButton.style.zIndex = '1000';
+    backButton.style.boxShadow = '0 4px 6px rgba(0,0,0,0.2)';
+    
+    // Ajouter l'événement de clic
+    backButton.addEventListener('click', function() {
+        window.location.href = '../index.html';
+    });
+    
+    // Ajouter le bouton au document
+    document.body.appendChild(backButton);
+    
+    // Aussi, ajouter un gestionnaire d'événement pour détecter la fin du processus
+    window.addEventListener('message', function(event) {
+        // Si nous recevons un message indiquant que l'email a été envoyé
+        if (event.data && event.data.emailSent) {
+            window.location.href = '../index.html';
+        }
+    });
+    
+    // Pour les navigateurs mobiles modernes
+    window.addEventListener('visibilitychange', function() {
+        // Si la page redevient visible après avoir été masquée (après l'envoi de l'email)
+        if (!document.hidden && document.getElementById('success').style.display === 'block') {
+            // Rediriger après un court délai
+            setTimeout(function() {
+                window.location.href = '../index.html';
+            }, 1000);
+        }
+    });
+}
+        
     </script>
 </body>
 </html>
