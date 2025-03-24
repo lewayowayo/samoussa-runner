@@ -1618,6 +1618,23 @@ function canGenerateReward(level) {
             }
         }
         
+         // MODIFICATION ICI - Ajouter le traitement spécial pour le niveau 8
+        if (level === 8) {
+            // Vérifier si niveau 8 a déjà été gagné
+            const level8Awarded = localStorage.getItem('level8RewardAwarded');
+            if (level8Awarded === 'true') {
+                return {
+                    canGenerate: false,
+                    message: "Vous avez déjà obtenu la récompense de niveau 8 auparavant.",
+                    isPermanent: true
+                };
+            } else {
+                // Marquer comme attribué de façon permanente
+                localStorage.setItem('level8RewardAwarded', 'true');
+                return { canGenerate: true };
+            }
+        }
+        
         // Vérification mensuelle normale pour les autres niveaux
         const rewardHistory = JSON.parse(localStorage.getItem('rewardHistory') || '{}');
         const now = new Date();
@@ -1634,7 +1651,7 @@ function canGenerateReward(level) {
         // Limites mensuelles par niveau
         const monthlyLimits = {
             5: 2,  // Niveau 5: 2 codes par mois
-            6: 2,  // Niveau 6: 2 codes par mois
+            6: 1,  // Niveau 6: 1 code par mois
             7: 1,  // Niveau 7: 1 code par mois
             8: 1   // Niveau 8: 1 code par mois
         };
