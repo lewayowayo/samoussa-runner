@@ -1717,12 +1717,12 @@ function generateRewardQR(score, level) {
     // Format ISO pour le QR code
     const expiryDateISO = expiryDateObj.toISOString().split('T')[0];
     
-    // NOUVEAU - Générer une signature pour sécuriser le code
+    // MODIFICATION: Générer une signature complète pour sécuriser le code
     const dataToSign = `${level}:${uniqueId}:${expiryDateISO}:${reward}`;
     const signature = generateSignature(dataToSign);
     
-    // Nouveau format de code avec signature
-    const secureCode = `WY-${level}K-${uniqueId}-${signature.substring(0, 6)}`;
+    // MODIFICATION: Utiliser la signature COMPLÈTE (ne pas tronquer)
+    const secureCode = `WY-${level}K-${uniqueId}-${signature}`;
     
     const codeData = `WAYOWAYO:CODE=${secureCode}:REWARD=${reward}:EXPIRES=${expiryDateISO}`;
 
@@ -1743,6 +1743,7 @@ function generateRewardQR(score, level) {
 }
         
         
+        
         // NOUVELLE FONCTION - Génère une signature pour sécuriser les codes
 function generateSignature(data) {
     // Clé secrète spécifique au jeu (NE PAS CHANGER une fois en production)
@@ -1759,6 +1760,53 @@ function generateSignature(data) {
     }
     
     // Convertir en string hexadécimal et prendre les 8 premiers caractères
+    return Math.abs(hash).toString(16).padStart(8, '0');
+}
+        
+        // Fonction pour créer des paramètres d'email sécurisés avec signature globale
+function createSecureEmailParams(code, reward, expiry, score, level) {
+    // Vérifier que toutes les valeurs sont définies
+    if (!code || !reward || !expiry || !score || !level) {
+        console.error("Paramètres incomplets pour la signature");
+        return "";
+    }
+    
+    // Données concaténées à signer
+    const dataToSign = `${code}:${reward}:${expiry}:${score}:${level}`;
+    
+    // Générer la signature avec la fonction existante
+    const signature = generateSignature(dataToSign);
+    
+    // Créer la chaîne de paramètres avec la signature
+    return `code=${encodeURIComponent(code)}`
+         + `&reward=${encodeURIComponent(reward)}`
+         + `&expiry=${encodeURIComponent(expiry)}`
+         + `&score=${encodeURIComponent(score)}`
+         + `&level=${encodeURIComponent(level)}`
+         + `&sig=${encodeURIComponent(signature)}`;
+}
+        
+        
+        
+        // NOUVELLE FONCTION - Génère une signature globale pour l'URL entière
+function generateUrlSignature(code, reward, expiry, score, level) {
+    // Clé secrète - DOIT être identique à celle du script Google Apps
+    const secretKey = "SAMOUSSA_WAYOWAYO_2025";
+    
+    // Création de la chaîne à signer (tous les paramètres importants)
+    const dataToSign = `${code}:${reward}:${expiry}:${score}:${level}`;
+    
+    // Fonction simple de hachage
+    let hash = 0;
+    const combinedString = secretKey + dataToSign;
+    
+    for (let i = 0; i < combinedString.length; i++) {
+        const char = combinedString.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Conversion en 32bit integer
+    }
+    
+    // Convertir en string hexadécimal
     return Math.abs(hash).toString(16).padStart(8, '0');
 }
         
@@ -3665,7 +3713,9 @@ rewardSection.innerHTML = `
     <div class="qr-container">${qrResult.html || '<p>QR Code non disponible</p>'}</div>
     <p class="code-text">Code: ${qrResult.code}</p>
     <p class="expiry">Valable jusqu'au ${qrResult.expiryDate}</p>
-    <a href="email-form.html?code=${encodeURIComponent(qrResult.code)}&reward=${encodeURIComponent(qrResult.reward)}&expiry=${encodeURIComponent(qrResult.expiryDate)}&score=${score}&level=${difficultyLevel}" 
+    
+    <!-- Créer une signature globale pour tous les paramètres -->
+    <a href="email-form.html?code=${encodeURIComponent(qrResult.code)}&reward=${encodeURIComponent(qrResult.reward)}&expiry=${encodeURIComponent(qrResult.expiryDate)}&score=${score}&level=${difficultyLevel}&sig=${generateUrlSignature(qrResult.code, qrResult.reward, qrResult.expiryDate, score, difficultyLevel)}" 
    id="email-link-${Date.now()}"
    target="_blank" 
    style="display:block; width:100%; padding:12px; background-color:#4A89DC; color:white; border-radius:8px; font-size:16px; font-weight:bold; text-align:center; margin:15px 0 0 0; text-decoration:none; box-sizing:border-box;">
