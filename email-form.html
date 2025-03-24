@@ -92,6 +92,22 @@
         document.getElementById('expiry').value = urlParams.get('expiry') || '';
         document.getElementById('score').value = urlParams.get('score') || '';
         document.getElementById('level').value = urlParams.get('level') || '';
+
+        // Dans email-form.html, juste après la récupération des paramètres
+document.addEventListener('DOMContentLoaded', function() {
+    const params = getUrlParams();
+    const verification = verifyParams(params);
+    
+    if (!verification.valid) {
+        // Afficher l'erreur
+        const errorElement = document.getElementById('error-message');
+        errorElement.textContent = "Erreur : " + verification.message;
+        errorElement.style.display = "block";
+        
+        // Désactiver le formulaire
+        document.getElementById('email-form').style.display = "none";
+        return;
+    }
         
         // Tenter de remplir l'email depuis localStorage
         try {
