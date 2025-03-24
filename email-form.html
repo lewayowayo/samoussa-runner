@@ -188,6 +188,36 @@
             }
         }
 
+        // INSÉRER ICI - Nouvelles fonctions
+// Vérifier si ce code a déjà été envoyé à cet email récemment
+function checkAlreadySent(code) {
+    try {
+        // Récupérer l'historique des envois depuis localStorage
+        const sentHistory = JSON.parse(localStorage.getItem('wayowayoSentCodes') || '{}');
+        
+        // Vérifier si le code est déjà dans l'historique et si l'envoi est récent (moins de 24h)
+        if (sentHistory[code] && (Date.now() - sentHistory[code] < 24 * 60 * 60 * 1000)) {
+            return true; // Code déjà envoyé récemment
+        }
+        
+        return false;
+    } catch (e) {
+        console.warn("Erreur lors de la vérification de l'historique d'envoi:", e);
+        return false;
+    }
+}
+
+// Enregistrer l'envoi dans l'historique local
+function recordSentCode(code) {
+    try {
+        const sentHistory = JSON.parse(localStorage.getItem('wayowayoSentCodes') || '{}');
+        sentHistory[code] = Date.now();
+        localStorage.setItem('wayowayoSentCodes', JSON.stringify(sentHistory));
+    } catch (e) {
+        console.warn("Erreur lors de l'enregistrement dans l'historique d'envoi:", e);
+    }
+}
+
         // Initialisation et vérifications au chargement de la page
         document.addEventListener('DOMContentLoaded', function() {
             const params = getUrlParams();
@@ -232,6 +262,18 @@
             const score = document.getElementById('score').value;
             const level = document.getElementById('level').value;
             const sig = document.getElementById('sig').value;
+
+            // Vérifier si le code a déjà été envoyé récemment
+    if (checkAlreadySent(code)) {
+        // Afficher un message d'information
+        const errorElement = document.getElementById('error');
+        errorElement.textContent = "Ce code a déjà été envoyé récemment. Vérifiez vos emails ou patientez 24h avant de redemander.";
+        errorElement.style.display = "block";
+        return; // Ne pas continuer l'envoi
+    }
+    
+    // Enregistrer l'envoi
+    recordSentCode(code);
             
             // Sauvegarder l'email
             try {
