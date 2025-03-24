@@ -57,7 +57,6 @@
             border-radius: 5px;
             margin-top: 15px;
             text-align: center;
-            display: none;
         }
         .logo {
             max-width: 120px;
@@ -70,6 +69,8 @@
     <img src="assets/ww.png" alt="WAYOWAYO" class="logo">
     <h1>Recevoir mon code WAYOWAYO</h1>
     
+    <div id="error-message" class="error" style="display: none;"></div>
+    
     <form id="emailForm">
         <input type="email" id="email" placeholder="Votre adresse email" required>
         <input type="hidden" id="code" name="code">
@@ -77,45 +78,148 @@
         <input type="hidden" id="expiry" name="expiry">
         <input type="hidden" id="score" name="score">
         <input type="hidden" id="level" name="level">
+        <input type="hidden" id="sig" name="sig">
         
         <button type="submit">Envoyer</button>
         
         <div id="success" class="success">Email envoyé avec succès!</div>
-        <div id="error" class="error">Erreur: veuillez réessayer</div>
+        <div id="error" class="error" style="display: none;">Erreur: veuillez réessayer</div>
     </form>
 
     <script>
-        // Récupérer les paramètres de l'URL
-        const urlParams = new URLSearchParams(window.location.search);
-        document.getElementById('code').value = urlParams.get('code') || '';
-        document.getElementById('reward').value = urlParams.get('reward') || '';
-        document.getElementById('expiry').value = urlParams.get('expiry') || '';
-        document.getElementById('score').value = urlParams.get('score') || '';
-        document.getElementById('level').value = urlParams.get('level') || '';
-
-        // Dans email-form.html, juste après la récupération des paramètres
-document.addEventListener('DOMContentLoaded', function() {
-    const params = getUrlParams();
-    const verification = verifyParams(params);
-    
-    if (!verification.valid) {
-        // Afficher l'erreur
-        const errorElement = document.getElementById('error-message');
-        errorElement.textContent = "Erreur : " + verification.message;
-        errorElement.style.display = "block";
-        
-        // Désactiver le formulaire
-        document.getElementById('email-form').style.display = "none";
-        return;
-    }
-        
-        // Tenter de remplir l'email depuis localStorage
-        try {
-            const savedEmail = localStorage.getItem('wayowayoUserEmail');
-            if (savedEmail) {
-                document.getElementById('email').value = savedEmail;
+        // Fonction pour générer une signature
+        function generateSignature(data) {
+            // Clé secrète (DOIT être identique à celle dans le jeu et dans Code.gs)
+            const secretKey = "SAMOUSSA_WAYOWAYO_2025";
+            
+            // Fonction simple de hachage
+            let hash = 0;
+            const combinedString = secretKey + data;
+            
+            for (let i = 0; i < combinedString.length; i++) {
+                const char = combinedString.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Conversion en 32bit integer
             }
-        } catch(e) {}
+            
+            // Convertir en string hexadécimal
+            return Math.abs(hash).toString(16).padStart(8, '0');
+        }
+
+        // Récupérer et vérifier les paramètres d'URL
+        function getUrlParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            const reward = urlParams.get('reward');
+            const expiry = urlParams.get('expiry');
+            const score = urlParams.get('score');
+            const level = urlParams.get('level');
+            const sig = urlParams.get('sig');
+            
+            return { code, reward, expiry, score, level, sig };
+        }
+
+        // Vérifier l'intégrité des paramètres
+        function verifyParams(params) {
+            // 1. Vérifier que tous les paramètres requis sont présents
+            if (!params.code || !params.reward || !params.expiry || 
+                !params.score || !params.level) {
+                return { valid: false, message: "Paramètres incomplets" };
+            }
+            
+            // Vérification OBLIGATOIRE de la signature globale
+            if (!params.sig) {
+                return { valid: false, message: "Signature manquante - cette demande n'est pas authentique" };
+            }
+            
+            // 2. Vérifier que le code a le bon format WY-nK-xxx-yyy
+            if (!params.code.match(/^WY-\d+K-[A-Za-z0-9]+-[A-Za-z0-9]+$/)) {
+                return { valid: false, message: "Format de code invalide" };
+            }
+            
+            // 3. Extraire le niveau du code
+            const levelMatch = params.code.match(/WY-(\d+)K-/);
+            if (!levelMatch) {
+                return { valid: false, message: "Format de code incorrect" };
+            }
+            
+            const codeLevel = levelMatch[1];
+            
+            // 4. Vérifier que le niveau du code correspond au paramètre level
+            if (codeLevel !== params.level) {
+                return { 
+                    valid: false, 
+                    message: `Incohérence de niveau: le code indique niveau ${codeLevel} mais le paramètre est ${params.level}` 
+                };
+            }
+            
+            // 5. Vérifier que la récompense correspond bien au niveau
+            const expectedReward = getExpectedReward(parseInt(params.level));
+            if (!params.reward.includes(expectedReward)) {
+                return { 
+                    valid: false, 
+                    message: `Récompense incorrecte: attendu '${expectedReward}' pour niveau ${params.level}` 
+                };
+            }
+            
+            // 6. Vérifier la signature globale - CRITIQUE
+            const dataToSign = `${params.code}:${params.reward}:${params.expiry}:${params.score}:${params.level}`;
+            const expectedSignature = generateSignature(dataToSign);
+            
+            if (params.sig !== expectedSignature) {
+                return { 
+                    valid: false, 
+                    message: "Modification détectée: les paramètres d'URL ont été altérés" 
+                };
+            }
+            
+            return { valid: true };
+        }
+
+        // Obtenir la récompense attendue pour un niveau
+        function getExpectedReward(level) {
+            switch(level) {
+                case 5: return "portion";
+                case 6: return "portions";
+                case 7: return "portions";
+                case 8: return "repas complet";
+                case 9: return "an";
+                default: return "";
+            }
+        }
+
+        // Initialisation et vérifications au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            const params = getUrlParams();
+            const verification = verifyParams(params);
+            
+            if (!verification.valid) {
+                // Afficher l'erreur
+                const errorElement = document.getElementById('error-message');
+                errorElement.textContent = "Erreur : " + verification.message;
+                errorElement.style.display = "block";
+                
+                // Désactiver le formulaire
+                document.getElementById('emailForm').style.display = "none";
+                return;
+            }
+            
+            // Si la vérification est réussie, remplir les champs cachés
+            document.getElementById('code').value = params.code || '';
+            document.getElementById('reward').value = params.reward || '';
+            document.getElementById('expiry').value = params.expiry || '';
+            document.getElementById('score').value = params.score || '';
+            document.getElementById('level').value = params.level || '';
+            document.getElementById('sig').value = params.sig || '';
+            
+            // Tenter de remplir l'email depuis localStorage
+            try {
+                const savedEmail = localStorage.getItem('wayowayoUserEmail');
+                if (savedEmail) {
+                    document.getElementById('email').value = savedEmail;
+                }
+            } catch(e) {}
+        });
         
         // Gestionnaire de formulaire
         document.getElementById('emailForm').addEventListener('submit', function(e) {
@@ -127,6 +231,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const expiry = document.getElementById('expiry').value; 
             const score = document.getElementById('score').value;
             const level = document.getElementById('level').value;
+            const sig = document.getElementById('sig').value;
             
             // Sauvegarder l'email
             try {
@@ -148,7 +253,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 'reward': reward,
                 'expiry': expiry,
                 'score': score,
-                'level': level
+                'level': level,
+                'sig': sig
             };
             
             for (const key in fields) {
