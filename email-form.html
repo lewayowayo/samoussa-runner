@@ -79,6 +79,15 @@
         <input type="hidden" id="score" name="score">
         <input type="hidden" id="level" name="level">
         <input type="hidden" id="sig" name="sig">
+
+        <div style="margin-bottom: 15px; background-color: #444; padding: 10px; border-radius: 5px;">
+      <label style="display: flex; align-items: flex-start; cursor: pointer;">
+        <input type="checkbox" id="rgpd-consent" required style="margin-top: 3px; margin-right: 10px;">
+        <span style="font-size: 14px;">
+          J'accepte que mon adresse email soit collectée pour recevoir ma récompense. Ces données seront conservées pendant 12 mois et ne seront jamais partagées avec des tiers. Je dispose d'un droit d'accès, de rectification et de suppression de mes données en contactant <a href="mailto:contact@wayowayo.fr" style="color: #4A89DC;">contact@wayowayo.fr</a>.
+        </span>
+      </label>
+    </div>
         
         <button type="submit">Envoyer</button>
         
@@ -253,6 +262,12 @@ function recordSentCode(code) {
         
         // Gestionnaire de formulaire
         document.getElementById('emailForm').addEventListener('submit', function(e) {
+if (!document.getElementById('rgpd-consent').checked) {
+            e.preventDefault();
+            document.getElementById('error').textContent = "Veuillez accepter les conditions d'utilisation de vos données pour continuer.";
+            document.getElementById('error').style.display = "block";
+            return;
+        }
             e.preventDefault();
             
             const email = document.getElementById('email').value;
