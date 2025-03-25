@@ -1545,8 +1545,15 @@
     <div class="restaurant-info">
         <p>Restaurant Créole Réunionnais WAYOWAYO</p>
         <p>Venez déguster nos délicieux samoussas!</p>
+    </div> 
+        
+         <div style="margin-top: 10px; text-align: center; font-size: 12px;">
+        <a href="#" id="legal-link" style="color: #999; text-decoration: underline; padding: 8px;">Mentions légales</a>
     </div>
+        
 </div>
+    
+    
     
     <div id="desktop-message" class="overlay-screen" style="display: none;">
         <div class="logo-container">
@@ -4808,42 +4815,62 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 1000);
 });
 </script>
+ 
     
-    
-    
-<div id="legal-button" style="position: fixed; bottom: 10px; left: 10px; background-color: rgba(0,0,0,0.5); color: white; font-size: 12px; padding: 5px 10px; border-radius: 5px; z-index: 1000; cursor: pointer;">
-  Mentions légales
+    <div id="legal-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); z-index: 3000; overflow-y: auto;">
+    <div style="background-color: white; color: #333; margin: 20px auto; padding: 20px; max-width: 600px; border-radius: 8px; font-size: 14px;">
+        <h2 style="color: #ff6b6b; text-align: center; margin-bottom: 20px;">Mentions légales</h2>
+        
+        <p><strong>Éditeur du site :</strong> WAYOWAYO SAS</p>
+        <p><strong>Siège social :</strong> 112 rue Alexis Labro, 33130 Bègles</p>
+        <p><strong>SIRET :</strong> [Numéro SIRET]</p>
+        <p><strong>Directeur de publication :</strong> [Nom du responsable]</p>
+        <p><strong>Contact :</strong> contact@wayowayo.fr</p>
+        <p><strong>Hébergement :</strong> GitHub Pages, Microsoft Corporation</p>
+        
+        <h3 style="color: #ff6b6b; margin-top: 15px;">Propriété intellectuelle</h3>
+        <p>Le jeu "Samoussa Runner" et tous ses éléments sont la propriété exclusive de WAYOWAYO SAS.</p>
+        
+        <h3 style="color: #ff6b6b; margin-top: 15px;">Données personnelles</h3>
+        <p>Les données collectées (adresse email) sont utilisées uniquement pour l'envoi des récompenses du jeu. Elles sont conservées pour une durée de 12 mois.</p>
+        <p>Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données en écrivant à contact@wayowayo.fr.</p>
+        
+        <button id="close-legal" style="background-color: #ff6b6b; color: white; border: none; width: 100%; padding: 10px 15px; border-radius: 5px; margin-top: 20px; cursor: pointer; font-weight: bold;">Fermer</button>
+    </div>
 </div>
-
-<div id="legal-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 2000; overflow-y: auto;">
-  <div style="background-color: white; margin: 20px auto; padding: 20px; max-width: 600px; border-radius: 8px; color: black; font-size: 14px;">
-    <h2>Mentions légales</h2>
-    <p><strong>Éditeur du site :</strong> WAYOWAYO SAS</p>
-    <p><strong>Siège social :</strong>112 rue Alexis Labro 33130 BEGLES</p>
-    <p><strong>SIRET :</strong> 834 944 274</p>
-    <p><strong>Directeur de publication :</strong> Etienne Dega</p>
-    <p><strong>Contact :</strong> contact@wayowayo.fr</p>
-    <p><strong>Hébergement :</strong> GitHub Pages, Microsoft Corporation</p>
     
-    <h3>Propriété intellectuelle</h3>
-    <p>Le jeu "Samoussa Runner" et tous ses éléments sont la propriété exclusive de WAYOWAYO SAS.</p>
     
-    <h3>Données personnelles</h3>
-    <p>Les données collectées (adresse email) sont utilisées uniquement pour l'envoi des récompenses du jeu. Elles sont conservées pour une durée de 12 mois.</p>
-    <p>Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données en écrivant à [email].</p>
-    
-    <button id="close-legal" style="background-color: #ff6b6b; color: white; border: none; padding: 10px 15px; border-radius: 5px; margin-top: 15px; cursor: pointer;">Fermer</button>
-  </div>
-</div>
-
-<script>
-  document.getElementById('legal-button').addEventListener('click', function() {
-    document.getElementById('legal-modal').style.display = 'block';
-  });
-  
-  document.getElementById('close-legal').addEventListener('click', function() {
-    document.getElementById('legal-modal').style.display = 'none';
-  });
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLink = document.getElementById('legal-link');
+        const legalModal = document.getElementById('legal-modal');
+        const closeLegal = document.getElementById('close-legal');
+        
+        if (legalLink && legalModal && closeLegal) {
+            // Ouvrir le modal
+            legalLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                legalModal.style.display = 'block';
+                
+                // Empêcher le défilement du contenu sous-jacent
+                document.body.style.overflow = 'hidden';
+            });
+            
+            // Fermer le modal
+            closeLegal.addEventListener('click', function() {
+                legalModal.style.display = 'none';
+                document.body.style.overflow = '';
+            });
+            
+            // Fermer en cliquant en dehors du contenu
+            legalModal.addEventListener('click', function(e) {
+                if (e.target === legalModal) {
+                    legalModal.style.display = 'none';
+                    document.body.style.overflow = '';
+                }
+            });
+        }
+    });
 </script>
     
     
