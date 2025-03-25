@@ -81,13 +81,16 @@
         <input type="hidden" id="sig" name="sig">
 
         <div style="margin-bottom: 15px; background-color: #444; padding: 10px; border-radius: 5px;">
-      <label style="display: flex; align-items: flex-start; cursor: pointer;">
-        <input type="checkbox" id="rgpd-consent" required style="margin-top: 3px; margin-right: 10px;">
-        <span style="font-size: 14px;">
-          J'accepte que mon adresse email soit collectée pour recevoir ma récompense. Ces données seront conservées pendant 12 mois et ne seront jamais partagées avec des tiers. Je dispose d'un droit d'accès, de rectification et de suppression de mes données en contactant <a href="mailto:contact@wayowayo.fr" style="color: #4A89DC;">contact@wayowayo.fr</a>.
-        </span>
-      </label>
+  <label style="display: block; cursor: pointer;">
+    <div style="display: flex; margin-bottom: 8px;">
+      <input type="checkbox" id="rgpd-consent" required style="min-width: 20px; width: 20px; height: 20px; margin-right: 10px; margin-top: 2px; flex-shrink: 0;">
+      <strong style="font-size: 14px;">J'accepte les conditions suivantes :</strong>
     </div>
+    <span style="font-size: 13px; display: block; margin-left: 30px;">
+      Mon adresse email est collectée uniquement pour recevoir ma récompense. Ces données sont conservées 12 mois et ne seront jamais partagées avec des tiers. Je dispose d'un droit d'accès, de rectification et de suppression en contactant <a href="mailto:contact@wayowayo.fr" style="color: #4A89DC;">contact@wayowayo.fr</a>.
+    </span>
+  </label>
+</div>
         
         <button type="submit">Envoyer</button>
         
