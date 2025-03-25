@@ -361,7 +361,7 @@ if (isPWA) {
     
     // Ajouter l'événement de clic
     backButton.addEventListener('click', function() {
-        window.location.href = '../index.html';
+        window.location.href = 'https://lewayowayo.github.io/samoussa-runner';
     });
     
     // Ajouter le bouton au document
@@ -371,7 +371,7 @@ if (isPWA) {
     window.addEventListener('message', function(event) {
         // Si nous recevons un message indiquant que l'email a été envoyé
         if (event.data && event.data.emailSent) {
-            window.location.href = '../index.html';
+            window.location.href = 'https://lewayowayo.github.io/samoussa-runner';
         }
     });
     
@@ -381,7 +381,7 @@ if (isPWA) {
         if (!document.hidden && document.getElementById('success').style.display === 'block') {
             // Rediriger après un court délai
             setTimeout(function() {
-                window.location.href = '../index.html';
+                window.location.href = 'https://lewayowayo.github.io/samoussa-runner';
             }, 1000);
         }
     });
