@@ -3857,42 +3857,41 @@ gameOverScreen.insertBefore(rewardSection, restartButton);
         // Appliquer un correctif pour rendre le lien instantanément réactif
 setTimeout(() => {
     // ID unique généré dans le HTML
-    const emailLinkId = rewardSection.querySelector('a[id^="email-link-"]').id;
-    const emailBox = document.getElementById(emailLinkId);
-    if (emailBox) {
-        // Créer un élément invisible qui couvre toute la zone
-        const touchHelper = document.createElement('div');
-        touchHelper.style.cssText = `
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 20000;
-            background: transparent;
-        `;
-        emailBox.style.position = 'relative';
-        emailBox.appendChild(touchHelper);
-        
-        // Ajouter des gestionnaires pour TOUS les types d'événements possibles
-        ['click', 'touchstart', 'touchend', 'mousedown', 'mouseup', 'pointerdown', 'pointerup'].forEach(eventType => {
-            touchHelper.addEventListener(eventType, function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                // Forcer l'ouverture du lien via JavaScript
-                const href = emailBox.getAttribute('href');
-                window.open(href, '_blank');
-                
-                // Feedback visuel
-                emailBox.style.backgroundColor = '#3277C7';
-                setTimeout(() => {
-                    emailBox.style.backgroundColor = '#4A89DC';
-                }, 150);
-                
-                return false;
-            }, {capture: true, passive: false});
-        });
+   const emailLinkId = rewardSection.querySelector('a[id^="email-link-"]').id;
+const emailBox = document.getElementById(emailLinkId);
+if (emailBox) {
+    const secureUrl = generateSecureSamoussaUrl(level, score);
+
+    const touchHelper = document.createElement('div');
+    touchHelper.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 20000;
+        background: transparent;
+    `;
+    emailBox.style.position = 'relative';
+    emailBox.appendChild(touchHelper);
+
+    ['click', 'touchstart', 'touchend', 'mousedown', 'mouseup', 'pointerdown', 'pointerup'].forEach(eventType => {
+        touchHelper.addEventListener(eventType, function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(secureUrl, '_blank');
+
+            emailBox.style.backgroundColor = '#3277C7';
+            setTimeout(() => {
+                emailBox.style.backgroundColor = '#4A89DC';
+            }, 150);
+
+            return false;
+        }, {capture: true, passive: false});
+    });
+}
+
         
         console.log("Aide tactile ajoutée au lien email");
     }
