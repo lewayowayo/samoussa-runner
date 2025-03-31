@@ -3896,47 +3896,7 @@ function generateSecureSamoussaUrl(level, score) {
 }
 
         <script>
-            
-// ✅ Remplacement propre du lien cliquable
-setTimeout(() => {
-  const emailLinkId = rewardSection.querySelector('a[id^="email-link-"]').id;
-  const emailBox = document.getElementById(emailLinkId);
-
-  if (emailBox) {
-    const secureUrl = generateSecureSamoussaUrl(level, score);
-
-    const touchHelper = document.createElement('div');
-    touchHelper.style.cssText = `
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 20000;
-      background: transparent;
-    `;
-    emailBox.style.position = 'relative';
-    emailBox.appendChild(touchHelper);
-
-    ['click', 'touchstart', 'touchend', 'mousedown', 'mouseup', 'pointerdown', 'pointerup'].forEach(eventType => {
-      touchHelper.addEventListener(eventType, function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        window.open(secureUrl, '_blank');
-
-        emailBox.style.backgroundColor = '#3277C7';
-        setTimeout(() => {
-          emailBox.style.backgroundColor = '#4A89DC';
-        }, 150);
-
-        return false;
-      }, { capture: true, passive: false });
-    });
-  }
-}, 300);
-</script>
-        
+                    
     
     setTimeout(() => {
         gameOverScreen.style.display = 'flex';
