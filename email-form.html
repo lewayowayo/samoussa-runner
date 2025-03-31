@@ -189,16 +189,16 @@
         }
 
         // Obtenir la récompense attendue pour un niveau
-        function getExpectedReward(level) {
-            switch(level) {
-                case 5: return "portion";
-                case 6: return "portions";
-                case 7: return "portions";
-                case 8: return "repas complet";
-                case 9: return "an";
-                default: return "";
-            }
-        }
+       function getExpectedReward(level) {
+    switch(level) {
+        case 5: return "1 portion de samoussas offerte!";
+        case 6: return "2 portions de samoussas offertes!";
+        case 7: return "4 portions de samoussas offertes!";
+        case 8: return "1 repas complet pour 2 offert (entrées + plats + desserts + boissons)";
+        case 9: return "1 an de WAYOWAYO offert (1 repas pour 2 par mois pendant 1 an)";
+        default: return "";
+    }
+}
 
         // INSÉRER ICI - Nouvelles fonctions
 // Vérifier si ce code a déjà été envoyé à cet email récemment
