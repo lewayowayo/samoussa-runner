@@ -1796,7 +1796,7 @@ function createSecureEmailParams(code, reward, expiry, score, level) {
     }
     
     // Données concaténées à signer
-    const dataToSign = `${code}:${reward}:${expiry}:${score}:${level}`;
+    const dataToSign = `${code}:${reward}::${score}:${level}`;
     
     // Générer la signature avec la fonction existante
     const signature = generateSignature(dataToSign);
@@ -1818,7 +1818,7 @@ function generateUrlSignature(code, reward, expiry, score, level) {
     const secretKey = "SAMOUSSA_WAYOWAYO_2025";
     
     // Création de la chaîne à signer (tous les paramètres importants)
-    const dataToSign = `${code}:${reward}:${expiry}:${score}:${level}`;
+    const dataToSign = `${code}:${reward}::${score}:${level}`;
     
     // Fonction simple de hachage
     let hash = 0;
@@ -3739,7 +3739,7 @@ rewardSection.innerHTML = `
     <p class="expiry">Valable jusqu'au ${qrResult.expiryDate}</p>
     
     <!-- Créer une signature globale pour tous les paramètres -->
-    <a href="email-form.html?code=${encodeURIComponent(qrResult.code)}&reward=${encodeURIComponent(qrResult.reward)}&expiry=${encodeURIComponent(qrResult.expiryDate)}&score=${score}&level=${difficultyLevel}&sig=${generateUrlSignature(qrResult.code, qrResult.reward, qrResult.expiryDate, score, difficultyLevel)}" 
+    <a href="email-form.html?code=${encodeURIComponent(qrResult.code)}&reward=${encodeURIComponent(qrResult.reward)}&expiry=${encodeURIComponent(qrResult.expiryDate)}&score=${score}&level=${difficultyLevel}&sig=${generateUrlSignature(qrResult.code, qrResult.reward, '', score, difficultyLevel)}" 
    id="email-link-${Date.now()}"
    target="_blank" 
    style="display:block; width:100%; padding:12px; background-color:#4A89DC; color:white; border-radius:8px; font-size:16px; font-weight:bold; text-align:center; margin:15px 0 0 0; text-decoration:none; box-sizing:border-box;">
