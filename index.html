@@ -4889,9 +4889,11 @@ function generateSecureSamoussaUrl(level, score) {
   const fullReward = rewardObj.full;
 
   const uniqueId = generateRandomId();
-  const dataToSign = `${level}:${uniqueId}::${reward}`;
+  const code = `WY-${level}K-${uniqueId}-${generateSignature(uniqueId)}`; // ← signature partielle pour code
+
+  // Signature complète (comme côté Apps Script)
+  const dataToSign = `${code}:${fullReward}::${score}:${level}`;
   const signature = generateSignature(dataToSign);
-  const code = `WY-${level}K-${uniqueId}-${signature}`;
 
   const expiry = new Date();
   expiry.setDate(expiry.getDate() + 7);
