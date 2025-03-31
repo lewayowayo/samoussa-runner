@@ -3853,47 +3853,89 @@ setTimeout(() => {
 // Insérer avant le bouton de restart
 const restartButton = document.getElementById('restart-button');
 gameOverScreen.insertBefore(rewardSection, restartButton);
-        
-        // Appliquer un correctif pour rendre le lien instantanément réactif
+
+        <script>
+// ✅ Fonction utilitaire pour générer un ID unique
+function generateRandomId() {
+  return Math.random().toString(36).substring(2, 12);
+}
+
+// ✅ Fonction de hachage sécurisée
+function generateSignature(data) {
+  const secretKey = "SAMOUSSA_WAYOWAYO_2025";
+  let hash = 0;
+  const combined = secretKey + data;
+  for (let i = 0; i < combined.length; i++) {
+    const char = combined.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash |= 0;
+  }
+  return Math.abs(hash).toString(16).padStart(8, '0');
+}
+
+// ✅ Génère une URL sécurisée vers email-form.html
+function generateSecureSamoussaUrl(level, score) {
+  const rewardMap = {
+    5: "1_PORTION",
+    6: "2_PORTIONS",
+    7: "4_PORTIONS",
+    8: "REPAS_COMPLET_2",
+    9: "1_AN_WAYOWAYO"
+  };
+
+  const reward = rewardMap[level] || "UNKNOWN";
+  const uniqueId = generateRandomId();
+  const dataToSign = `${level}:${uniqueId}::${reward}`;
+  const signature = generateSignature(dataToSign);
+  const code = `WY-${level}K-${uniqueId}-${signature}`;
+
+  const expiry = new Date();
+  expiry.setDate(expiry.getDate() + 7);
+  const expiryStr = expiry.toLocaleDateString('fr-FR');
+
+  return `email-form.html?code=${encodeURIComponent(code)}&reward=${encodeURIComponent(reward)}&expiry=${encodeURIComponent(expiryStr)}&score=${score}&level=${level}&sig=${signature}`;
+}
+
+// ✅ Remplacement propre du lien cliquable
 setTimeout(() => {
-    const emailLinkId = rewardSection.querySelector('a[id^="email-link-"]').id;
-    const emailBox = document.getElementById(emailLinkId);
+  const emailLinkId = rewardSection.querySelector('a[id^="email-link-"]').id;
+  const emailBox = document.getElementById(emailLinkId);
 
-    if (emailBox) {
-        const secureUrl = generateSecureSamoussaUrl(level, score); // ✅ génère l'URL sécurisée
+  if (emailBox) {
+    const secureUrl = generateSecureSamoussaUrl(level, score);
 
-        const touchHelper = document.createElement('div');
-        touchHelper.style.cssText = `
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 20000;
-            background: transparent;
-        `;
-        emailBox.style.position = 'relative';
-        emailBox.appendChild(touchHelper);
+    const touchHelper = document.createElement('div');
+    touchHelper.style.cssText = `
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 20000;
+      background: transparent;
+    `;
+    emailBox.style.position = 'relative';
+    emailBox.appendChild(touchHelper);
 
-        ['click', 'touchstart', 'touchend', 'mousedown', 'mouseup', 'pointerdown', 'pointerup'].forEach(eventType => {
-            touchHelper.addEventListener(eventType, function(e) {
-                e.preventDefault();
-                e.stopPropagation();
+    ['click', 'touchstart', 'touchend', 'mousedown', 'mouseup', 'pointerdown', 'pointerup'].forEach(eventType => {
+      touchHelper.addEventListener(eventType, function(e) {
+        e.preventDefault();
+        e.stopPropagation();
 
-                window.open(secureUrl, '_blank');
+        window.open(secureUrl, '_blank');
 
-                emailBox.style.backgroundColor = '#3277C7';
-                setTimeout(() => {
-                    emailBox.style.backgroundColor = '#4A89DC';
-                }, 150);
+        emailBox.style.backgroundColor = '#3277C7';
+        setTimeout(() => {
+          emailBox.style.backgroundColor = '#4A89DC';
+        }, 150);
 
-                return false;
-            }, { capture: true, passive: false });
-        });
-    }
+        return false;
+      }, { capture: true, passive: false });
+    });
+  }
+}, 300);
+</script>
         
-        console.log("Aide tactile ajoutée au lien email");
-}, 300); // ✅ On referme proprement ici, et une seule fois
     
     setTimeout(() => {
         gameOverScreen.style.display = 'flex';
@@ -4897,45 +4939,44 @@ function generateSecureSamoussaUrl(level, score) {
   return `email-form.html?code=${encodeURIComponent(code)}&reward=${encodeURIComponent(reward)}&expiry=${encodeURIComponent(expiryStr)}&score=${score}&level=${level}&sig=${signature}`;
 }
 
-// ✅ 3. Remplacement dans le gestionnaire de clic
-// Trouve ce bloc dans ton code, puis ajoute la ligne suivante à l'intérieur de la condition "if (emailBox) {"
+// ✅ 3. Bloc à intégrer juste après l'insertion de rewardSection
+setTimeout(() => {
+  const emailLinkId = rewardSection.querySelector('a[id^="email-link-"]').id;
+  const emailBox = document.getElementById(emailLinkId);
 
-// ...
-if (emailBox) {
-    const secureUrl = generateSecureSamoussaUrl(level, score); // 🔁 utilise les bonnes variables
+  if (emailBox) {
+    const secureUrl = generateSecureSamoussaUrl(level, score);
 
-    // Créer un élément invisible qui couvre toute la zone
     const touchHelper = document.createElement('div');
     touchHelper.style.cssText = `
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 20000;
-        background: transparent;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 20000;
+      background: transparent;
     `;
     emailBox.style.position = 'relative';
     emailBox.appendChild(touchHelper);
 
     ['click', 'touchstart', 'touchend', 'mousedown', 'mouseup', 'pointerdown', 'pointerup'].forEach(eventType => {
-        touchHelper.addEventListener(eventType, function(e) {
-            e.preventDefault();
-            e.stopPropagation();
+      touchHelper.addEventListener(eventType, function(e) {
+        e.preventDefault();
+        e.stopPropagation();
 
-            // Ouvrir l'URL sécurisée au lieu de l'attribut href
-            window.open(secureUrl, '_blank');
+        window.open(secureUrl, '_blank');
 
-            // Feedback visuel
-            emailBox.style.backgroundColor = '#3277C7';
-            setTimeout(() => {
-                emailBox.style.backgroundColor = '#4A89DC';
-            }, 150);
+        emailBox.style.backgroundColor = '#3277C7';
+        setTimeout(() => {
+          emailBox.style.backgroundColor = '#4A89DC';
+        }, 150);
 
-            return false;
-        }, {capture: true, passive: false});
+        return false;
+      }, { capture: true, passive: false });
     });
-}
+  }
+}, 300);
 </script>
     
     
