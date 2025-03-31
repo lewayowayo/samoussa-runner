@@ -4856,9 +4856,10 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- ✅ À faire dans ton fichier index.html (le bon) -->
 
 <script>
-// 1. 🔁 SUPPRIMER toute ancienne fonction nommée `generateSignature` avant ce bloc
-//    Exemple de code à supprimer (si présent) :
-// function generateSignature(...) { ... } // ❌
+// ✅ Fonction utilitaire pour générer un ID unique (nécessaire pour les codes QR)
+function generateRandomId() {
+  return Math.random().toString(36).substring(2, 12);
+}
 
 // ✅ 1. Ajouter cette version propre de generateSignature :
 function generateSignature(data) {
@@ -4876,15 +4877,15 @@ function generateSignature(data) {
 // ✅ 2. Ajouter cette fonction qui génère l'URL sécurisée :
 function generateSecureSamoussaUrl(level, score) {
   const rewardMap = {
-    5: "1 portion de samoussas offerte!",
-    6: "2 portions de samoussas offertes!",
-    7: "4 portions de samoussas offertes!",
-    8: "1 repas complet pour 2 offert (entrées + plats + desserts + boissons)",
-    9: "1 an de WAYOWAYO offert (1 repas pour 2 par mois pendant 1 an)"
+    5: "1_PORTION",
+    6: "2_PORTIONS",
+    7: "4_PORTIONS",
+    8: "REPAS_COMPLET_2",
+    9: "1_AN_WAYOWAYO"
   };
 
-  const reward = rewardMap[level] || "Récompense inconnue";
-  const uniqueId = generateRandomId(); // déjà existant dans ton code
+  const reward = rewardMap[level] || "UNKNOWN";
+  const uniqueId = generateRandomId();
   const dataToSign = `${level}:${uniqueId}::${reward}`;
   const signature = generateSignature(dataToSign);
   const code = `WY-${level}K-${uniqueId}-${signature}`;
@@ -4895,16 +4896,46 @@ function generateSecureSamoussaUrl(level, score) {
 
   return `email-form.html?code=${encodeURIComponent(code)}&reward=${encodeURIComponent(reward)}&expiry=${encodeURIComponent(expiryStr)}&score=${score}&level=${level}&sig=${signature}`;
 }
-    
-// ✅ 3. Trouver et remplacer toute redirection comme :
-// location.href = "email-form.html?code=...&reward=1%20portion..."
-// ou toute construction manuelle avec encodeURIComponent(...)
-// 👉 PAR :
-// location.href = generateSecureSamoussaUrl(finalLevel, finalScore);
-// (finalLevel et finalScore sont tes variables selon ton code)
 
-// ✅ 4. Supprimer aussi tout texte comme "1 portion de samoussas offerte!" dans l'URL.
-// Laisse le back-end le gérer à partir du code/reward sécurisé.
+// ✅ 3. Remplacement dans le gestionnaire de clic
+// Trouve ce bloc dans ton code, puis ajoute la ligne suivante à l'intérieur de la condition "if (emailBox) {"
+
+// ...
+if (emailBox) {
+    const secureUrl = generateSecureSamoussaUrl(level, score); // 🔁 utilise les bonnes variables
+
+    // Créer un élément invisible qui couvre toute la zone
+    const touchHelper = document.createElement('div');
+    touchHelper.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 20000;
+        background: transparent;
+    `;
+    emailBox.style.position = 'relative';
+    emailBox.appendChild(touchHelper);
+
+    ['click', 'touchstart', 'touchend', 'mousedown', 'mouseup', 'pointerdown', 'pointerup'].forEach(eventType => {
+        touchHelper.addEventListener(eventType, function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            // Ouvrir l'URL sécurisée au lieu de l'attribut href
+            window.open(secureUrl, '_blank');
+
+            // Feedback visuel
+            emailBox.style.backgroundColor = '#3277C7';
+            setTimeout(() => {
+                emailBox.style.backgroundColor = '#4A89DC';
+            }, 150);
+
+            return false;
+        }, {capture: true, passive: false});
+    });
+}
 </script>
     
     
