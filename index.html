@@ -1814,11 +1814,8 @@ function createSecureEmailParams(code, reward, expiry, score, level) {
         
         // NOUVELLE FONCTION - Génère une signature globale pour l'URL entière
 function generateUrlSignature(code, reward, expiry, score, level) {
-    // Clé secrète - DOIT être identique à celle du script Google Apps
     const secretKey = "SAMOUSSA_WAYOWAYO_2025";
-    
-    // Création de la chaîne à signer (tous les paramètres importants)
-    const dataToSign = `${code}:${reward}::${score}:${level}`;
+    const dataToSign = `${code}:${reward}:${expiry}:${score}:${level}`;
     
     // Fonction simple de hachage
     let hash = 0;
