@@ -1768,25 +1768,6 @@ function generateRewardQR(score, level) {
         
         
         
-        // NOUVELLE FONCTION - Génère une signature pour sécuriser les codes
-function generateSignature(data) {
-    // Clé secrète spécifique au jeu (NE PAS CHANGER une fois en production)
-    const secretKey = "SAMOUSSA_WAYOWAYO_2025";
-    
-    // Fonction simple de hachage
-    let hash = 0;
-    const combinedString = secretKey + data;
-    
-    for (let i = 0; i < combinedString.length; i++) {
-        const char = combinedString.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash = hash & hash; // Conversion en 32bit integer
-    }
-    
-    // Convertir en string hexadécimal et prendre les 8 premiers caractères
-    return Math.abs(hash).toString(16).padStart(8, '0');
-}
-        
         // Fonction pour créer des paramètres d'email sécurisés avec signature globale
 function createSecureEmailParams(code, reward, expiry, score, level) {
     // Vérifier que toutes les valeurs sont définies
@@ -4871,6 +4852,63 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
+</script>
+
+    <!-- Projet : Samoussa Runner - Debug QR Code -->
+<!-- Objectif : Générer une URL sécurisée correcte depuis index.html (GitHub) -->
+
+<!-- ✅ À faire dans ton fichier index.html (le bon) -->
+
+<script>
+// 1. 🔁 SUPPRIMER toute ancienne fonction nommée `generateSignature` avant ce bloc
+//    Exemple de code à supprimer (si présent) :
+// function generateSignature(...) { ... } // ❌
+
+// ✅ 1. Ajouter cette version propre de generateSignature :
+function generateSignature(data) {
+  const secretKey = "SAMOUSSA_WAYOWAYO_2025";
+  let hash = 0;
+  const combined = secretKey + data;
+  for (let i = 0; i < combined.length; i++) {
+    const char = combined.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash |= 0;
+  }
+  return Math.abs(hash).toString(16).padStart(8, '0');
+}
+
+// ✅ 2. Ajouter cette fonction qui génère l'URL sécurisée :
+function generateSecureSamoussaUrl(level, score) {
+  const rewardMap = {
+    5: "1_PORTION",
+    6: "2_PORTIONS",
+    7: "4_PORTIONS",
+    8: "REPAS_COMPLET_2",
+    9: "1_AN_WAYOWAYO"
+  };
+
+  const reward = rewardMap[level] || "UNKNOWN";
+  const uniqueId = generateRandomId(); // ⚠️ doit être déjà défini ailleurs dans ton code
+  const dataToSign = `${level}:${uniqueId}::${reward}`;
+  const signature = generateSignature(dataToSign);
+  const code = `WY-${level}K-${uniqueId}-${signature}`;
+
+  const expiry = new Date();
+  expiry.setDate(expiry.getDate() + 7);
+  const expiryStr = expiry.toLocaleDateString('fr-FR');
+
+  return `email-form.html?code=${encodeURIComponent(code)}&reward=${encodeURIComponent(reward)}&expiry=${encodeURIComponent(expiryStr)}&score=${score}&level=${level}&sig=${signature}`;
+}
+
+// ✅ 3. Trouver et remplacer toute redirection comme :
+// location.href = "email-form.html?code=...&reward=1%20portion..."
+// ou toute construction manuelle avec encodeURIComponent(...)
+// 👉 PAR :
+// location.href = generateSecureSamoussaUrl(finalLevel, finalScore);
+// (finalLevel et finalScore sont tes variables selon ton code)
+
+// ✅ 4. Supprimer aussi tout texte comme "1 portion de samoussas offerte!" dans l'URL.
+// Laisse le back-end le gérer à partir du code/reward sécurisé.
 </script>
     
     
