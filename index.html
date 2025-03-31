@@ -4899,6 +4899,7 @@ function generateSecureSamoussaUrl(level, score) {
 
   return `email-form.html?code=${encodeURIComponent(code)}&reward=${encodeURIComponent(fullReward)}&expiry=${encodeURIComponent(expiryStr)}&score=${score}&level=${level}&sig=${signature}`;
 }
+    
 // ✅ 3. Trouver et remplacer toute redirection comme :
 // location.href = "email-form.html?code=...&reward=1%20portion..."
 // ou toute construction manuelle avec encodeURIComponent(...)
