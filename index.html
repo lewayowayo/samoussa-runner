@@ -3891,13 +3891,9 @@ setTimeout(() => {
             }, { capture: true, passive: false });
         });
     }
-}, 300); // ✅ NE PAS OUBLIER la parenthèse fermante et le point-virgule ici !
-
-
         
         console.log("Aide tactile ajoutée au lien email");
-    }
-}, 300);
+}, 300); // ✅ On referme proprement ici, et une seule fois
     
     setTimeout(() => {
         gameOverScreen.style.display = 'flex';
