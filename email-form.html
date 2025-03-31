@@ -175,7 +175,7 @@
             }
             
             // 6. Vérifier la signature globale - CRITIQUE
-            const dataToSign = `${params.code}:${params.reward}:${params.expiry}:${params.score}:${params.level}`;
+            const dataToSign = `${params.code}:${params.reward}::${params.score}:${params.level}`;
             const expectedSignature = generateSignature(dataToSign);
             
             if (params.sig !== expectedSignature) {
