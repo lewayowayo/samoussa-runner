@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Recevoir mon code WAYOWAYO</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #222;
+            color: white;
+        }
+        h1 {
+            color: #FFD700;
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+        form {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        input, button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4A89DC;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .success {
+            background-color: #27ae60;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+            text-align: center;
+            display: none;
+        }
+        .error {
+            background-color: #e74c3c;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+            text-align: center;
+        }
+        .logo {
+            max-width: 120px;
+            margin: 0 auto 20px auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <img src="assets/ww.png" alt="WAYOWAYO" class="logo">
+    <h1>Recevoir mon code WAYOWAYO</h1>
+    
+    <div id="error-message" class="error" style="display: none;"></div>
+    
+    <form id="emailForm">
+        <input type="email" id="email" placeholder="Votre adresse email" required>
+        <input type="hidden" id="code" name="code">
+        <input type="hidden" id="reward" name="reward">
+        <input type="hidden" id="expiry" name="expiry">
+        <input type="hidden" id="score" name="score">
+        <input type="hidden" id="level" name="level">
+        <input type="hidden" id="sig" name="sig">
+
+        <div style="margin-bottom: 15px; background-color: #444; padding: 10px; border-radius: 5px;">
+  <label style="display: block; cursor: pointer;">
+    <div style="display: flex; margin-bottom: 8px;">
+      <input type="checkbox" id="rgpd-consent" required style="min-width: 20px; width: 20px; height: 20px; margin-right: 10px; margin-top: 2px; flex-shrink: 0;">
+      <strong style="font-size: 14px;">J'accepte les conditions suivantes :</strong>
+    </div>
+    <span style="font-size: 13px; display: block; margin-left: 30px;">
+      Mon adresse email est collectée uniquement pour recevoir ma récompense. Ces données sont conservées 12 mois et ne seront jamais partagées avec des tiers. Je dispose d'un droit d'accès, de rectification et de suppression en contactant <a href="mailto:contact@wayowayo.fr" style="color: #4A89DC;">contact@wayowayo.fr</a>.
+    </span>
+  </label>
+</div>
+        
+        <button type="submit">Envoyer</button>
+        
+        <div id="success" class="success">Email envoyé avec succès!</div>
+        <div id="error" class="error" style="display: none;">Erreur: veuillez réessayer</div>
+    </form>
+
+    <script>
+        // Fonction pour générer une signature
+        function generateSignature(data) {
+            // Clé secrète (DOIT être identique à celle dans le jeu et dans Code.gs)
+            const secretKey = "SAMOUSSA_WAYOWAYO_2025";
+            
+            // Fonction simple de hachage
+            let hash = 0;
+            const combinedString = secretKey + data;
+            
+            for (let i = 0; i < combinedString.length; i++) {
+                const char = combinedString.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Conversion en 32bit integer
+            }
+            
+            // Convertir en string hexadécimal
+            return Math.abs(hash).toString(16).padStart(8, '0');
+        }
+
+        // Récupérer et vérifier les paramètres d'URL
+        function getUrlParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            const reward = urlParams.get('reward');
+            const expiry = urlParams.get('expiry');
+            const score = urlParams.get('score');
+            const level = urlParams.get('level');
+            const sig = urlParams.get('sig');
+            
+            return { code, reward, expiry, score, level, sig };
+        }
+
+        // Vérifier l'intégrité des paramètres
+        function verifyParams(params) {
+            // 1. Vérifier que tous les paramètres requis sont présents
+            if (!params.code || !params.reward || !params.expiry || 
+                !params.score || !params.level) {
+                return { valid: false, message: "Paramètres incomplets" };
+            }
+            
+            // Vérification OBLIGATOIRE de la signature globale
+            if (!params.sig) {
+                return { valid: false, message: "Signature manquante - cette demande n'est pas authentique" };
+            }
+            
+            // 2. Vérifier que le code a le bon format WY-nK-xxx-yyy
+            if (!params.code.match(/^WY-\d+K-[A-Za-z0-9]+-[A-Za-z0-9]+$/)) {
+                return { valid: false, message: "Format de code invalide" };
+            }
+            
+            // 3. Extraire le niveau du code
+            const levelMatch = params.code.match(/WY-(\d+)K-/);
+            if (!levelMatch) {
+                return { valid: false, message: "Format de code incorrect" };
+            }
+            
+            const codeLevel = levelMatch[1];
+            
+            // 4. Vérifier que le niveau du code correspond au paramètre level
+            if (codeLevel !== params.level) {
+                return { 
+                    valid: false, 
+                    message: `Incohérence de niveau: le code indique niveau ${codeLevel} mais le paramètre est ${params.level}` 
+                };
+            }
+            
+            // 5. Vérifier que la récompense correspond bien au niveau
+            const expectedReward = getExpectedReward(parseInt(params.level));
+            if (!params.reward.includes(expectedReward)) {
+                return { 
+                    valid: false, 
+                    message: `Récompense incorrecte: attendu '${expectedReward}' pour niveau ${params.level}` 
+                };
+            }
+            
+            // 6. Vérifier la signature globale - CRITIQUE
+            const dataToSign = `${params.code}:${params.reward}::${params.score}:${params.level}`;
+            const expectedSignature = generateSignature(dataToSign);
+            
+            if (params.sig !== expectedSignature) {
+                return { 
+                    valid: false, 
+                    message: "Modification détectée: les paramètres d'URL ont été altérés" 
+                };
+            }
+            
+            return { valid: true };
+        }
+
+        // Obtenir la récompense attendue pour un niveau
+       function getExpectedReward(level) {
+    switch(level) {
+        case 5: return "1 portion de samoussas offerte!";
+        case 6: return "2 portions de samoussas offertes!";
+        case 7: return "4 portions de samoussas offertes!";
+        case 8: return "1 repas complet pour 2 offert (entrées + plats + desserts + boissons)";
+        case 9: return "1 an de WAYOWAYO offert (1 repas pour 2 par mois pendant 1 an)";
+        default: return "";
+    }
+}
+
+        // INSÉRER ICI - Nouvelles fonctions
+// Vérifier si ce code a déjà été envoyé à cet email récemment
+function checkAlreadySent(code) {
+    try {
+        // Récupérer l'historique des envois depuis localStorage
+        const sentHistory = JSON.parse(localStorage.getItem('wayowayoSentCodes') || '{}');
+        
+        // Vérifier si le code est déjà dans l'historique et si l'envoi est récent (moins de 24h)
+        if (sentHistory[code] && (Date.now() - sentHistory[code] < 24 * 60 * 60 * 1000)) {
+            return true; // Code déjà envoyé récemment
+        }
+        
+        return false;
+    } catch (e) {
+        console.warn("Erreur lors de la vérification de l'historique d'envoi:", e);
+        return false;
+    }
+}
+
+// Enregistrer l'envoi dans l'historique local
+function recordSentCode(code) {
+    try {
+        const sentHistory = JSON.parse(localStorage.getItem('wayowayoSentCodes') || '{}');
+        sentHistory[code] = Date.now();
+        localStorage.setItem('wayowayoSentCodes', JSON.stringify(sentHistory));
+    } catch (e) {
+        console.warn("Erreur lors de l'enregistrement dans l'historique d'envoi:", e);
+    }
+}
+
+        // Initialisation et vérifications au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            const params = getUrlParams();
+            const verification = verifyParams(params);
+            
+            if (!verification.valid) {
+                // Afficher l'erreur
+                const errorElement = document.getElementById('error-message');
+                errorElement.textContent = "Erreur : " + verification.message;
+                errorElement.style.display = "block";
+                
+                // Désactiver le formulaire
+                document.getElementById('emailForm').style.display = "none";
+                return;
+            }
+            
+            // Si la vérification est réussie, remplir les champs cachés
+            document.getElementById('code').value = params.code || '';
+            document.getElementById('reward').value = params.reward || '';
+            document.getElementById('expiry').value = params.expiry || '';
+            document.getElementById('score').value = params.score || '';
+            document.getElementById('level').value = params.level || '';
+            document.getElementById('sig').value = params.sig || '';
+            
+            // Tenter de remplir l'email depuis localStorage
+            try {
+                const savedEmail = localStorage.getItem('wayowayoUserEmail');
+                if (savedEmail) {
+                    document.getElementById('email').value = savedEmail;
+                }
+            } catch(e) {}
+        });
+        
+        // Gestionnaire de formulaire
+        document.getElementById('emailForm').addEventListener('submit', function(e) {
+if (!document.getElementById('rgpd-consent').checked) {
+            e.preventDefault();
+            document.getElementById('error').textContent = "Veuillez accepter les conditions d'utilisation de vos données pour continuer.";
+            document.getElementById('error').style.display = "block";
+            return;
+        }
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const code = document.getElementById('code').value;
+            const reward = document.getElementById('reward').value;
+            const expiry = document.getElementById('expiry').value; 
+            const score = document.getElementById('score').value;
+            const level = document.getElementById('level').value;
+            const sig = document.getElementById('sig').value;
+
+            // Vérifier si le code a déjà été envoyé récemment
+    if (checkAlreadySent(code)) {
+        // Afficher un message d'information
+        const errorElement = document.getElementById('error');
+        errorElement.textContent = "Ce code a déjà été envoyé récemment. Vérifiez vos emails ou patientez 24h avant de redemander.";
+        errorElement.style.display = "block";
+        return; // Ne pas continuer l'envoi
+    }
+    
+    // Enregistrer l'envoi
+    recordSentCode(code);
+            
+            // Sauvegarder l'email
+            try {
+                localStorage.setItem('wayowayoUserEmail', email);
+            } catch(e) {}
+            
+            // Créer un formulaire pour l'envoi au script Google
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'https://script.google.com/macros/s/AKfycbyGtw8lNTH5gg-qf7o1W0cugE92cN0RPBKRvRuT9gEA103iQd0vV7qAl7wVtADXMrXS/exec';
+            form.target = '_blank';
+            form.style.display = 'none';
+            
+            // Ajouter tous les champs
+            const fields = {
+                'action': 'sendQRCodeEmail',
+                'email': email,
+                'code': code,
+                'reward': reward,
+                'expiry': expiry,
+                'score': score,
+                'level': level,
+                'sig': sig
+            };
+            
+            for (const key in fields) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = fields[key];
+                form.appendChild(input);
+            }
+            
+            // Soumettre le formulaire
+            document.body.appendChild(form);
+            form.submit();
+            
+            // Afficher confirmation
+            document.getElementById('success').style.display = 'block';
+            
+            // Rediriger après un délai
+            setTimeout(() => {
+                window.close();
+            }, 3000);
+        });
+
+// Ajouter ce bloc à la fin de l'élément <script>, juste après la soumission du formulaire
+
+// Détecter si nous sommes en mode PWA
+const isPWA = window.matchMedia('(display-mode: standalone)').matches;
+
+// Si nous sommes en mode PWA, ajouter un bouton de retour
+if (isPWA) {
+    // Créer un bouton de retour flottant
+    const backButton = document.createElement('button');
+    backButton.textContent = '⬅️ Retour au jeu';
+    backButton.style.position = 'fixed';
+    backButton.style.bottom = '20px';
+    backButton.style.left = '20px';
+    backButton.style.padding = '12px 16px';
+    backButton.style.backgroundColor = '#ff6b6b';
+    backButton.style.color = 'white';
+    backButton.style.border = 'none';
+    backButton.style.borderRadius = '8px';
+    backButton.style.fontSize = '16px';
+    backButton.style.fontWeight = 'bold';
+    backButton.style.cursor = 'pointer';
+    backButton.style.zIndex = '1000';
+    backButton.style.boxShadow = '0 4px 6px rgba(0,0,0,0.2)';
+    
+    // Ajouter l'événement de clic
+    backButton.addEventListener('click', function() {
+        window.location.href = 'https://lewayowayo.github.io/samoussa-runner';
+    });
+    
+    // Ajouter le bouton au document
+    document.body.appendChild(backButton);
+    
+    // Aussi, ajouter un gestionnaire d'événement pour détecter la fin du processus
+    window.addEventListener('message', function(event) {
+        // Si nous recevons un message indiquant que l'email a été envoyé
+        if (event.data && event.data.emailSent) {
+            window.location.href = 'https://lewayowayo.github.io/samoussa-runner';
+        }
+    });
+    
+    // Pour les navigateurs mobiles modernes
+    window.addEventListener('visibilitychange', function() {
+        // Si la page redevient visible après avoir été masquée (après l'envoi de l'email)
+        if (!document.hidden && document.getElementById('success').style.display === 'block') {
+            // Rediriger après un court délai
+            setTimeout(function() {
+                window.location.href = 'https://lewayowayo.github.io/samoussa-runner';
+            }, 1000);
+        }
+    });
+}
+        
+    </script>
+</body>
+</html>
