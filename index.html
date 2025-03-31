@@ -4877,15 +4877,18 @@ function generateSignature(data) {
 // ✅ 2. Ajouter cette fonction qui génère l'URL sécurisée :
 function generateSecureSamoussaUrl(level, score) {
   const rewardMap = {
-    5: "1_PORTION",
-    6: "2_PORTIONS",
-    7: "4_PORTIONS",
-    8: "REPAS_COMPLET_2",
-    9: "1_AN_WAYOWAYO"
+    5: { short: "1 portion", full: "1 portion de samoussas offerte!" },
+    6: { short: "2 portions", full: "2 portions de samoussas offertes!" },
+    7: { short: "4 portions", full: "4 portions de samoussas offertes!" },
+    8: { short: "repas complet", full: "1 repas complet pour 2 (entrée + plat + dessert + boisson)" },
+    9: { short: "1 an", full: "1 an de WAYOWAYO offert (1 repas/mois pour 2)" }
   };
 
-  const reward = rewardMap[level] || "UNKNOWN";
-  const uniqueId = generateRandomId(); // ⚠️ doit être déjà défini ailleurs dans ton code
+  const rewardObj = rewardMap[level] || { short: "inconnu", full: "Récompense inconnue" };
+  const reward = rewardObj.short;
+  const fullReward = rewardObj.full;
+
+  const uniqueId = generateRandomId();
   const dataToSign = `${level}:${uniqueId}::${reward}`;
   const signature = generateSignature(dataToSign);
   const code = `WY-${level}K-${uniqueId}-${signature}`;
@@ -4894,9 +4897,8 @@ function generateSecureSamoussaUrl(level, score) {
   expiry.setDate(expiry.getDate() + 7);
   const expiryStr = expiry.toLocaleDateString('fr-FR');
 
-  return `email-form.html?code=${encodeURIComponent(code)}&reward=${encodeURIComponent(reward)}&expiry=${encodeURIComponent(expiryStr)}&score=${score}&level=${level}&sig=${signature}`;
+  return `email-form.html?code=${encodeURIComponent(code)}&reward=${encodeURIComponent(fullReward)}&expiry=${encodeURIComponent(expiryStr)}&score=${score}&level=${level}&sig=${signature}`;
 }
-
 // ✅ 3. Trouver et remplacer toute redirection comme :
 // location.href = "email-form.html?code=...&reward=1%20portion..."
 // ou toute construction manuelle avec encodeURIComponent(...)
