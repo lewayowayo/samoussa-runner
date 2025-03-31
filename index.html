@@ -4877,29 +4877,24 @@ function generateSignature(data) {
 // ✅ 2. Ajouter cette fonction qui génère l'URL sécurisée :
 function generateSecureSamoussaUrl(level, score) {
   const rewardMap = {
-    5: { short: "1 portion", full: "1 portion de samoussas offerte!" },
-    6: { short: "2 portions", full: "2 portions de samoussas offertes!" },
-    7: { short: "4 portions", full: "4 portions de samoussas offertes!" },
-    8: { short: "repas complet", full: "1 repas complet pour 2 (entrée + plat + dessert + boisson)" },
-    9: { short: "1 an", full: "1 an de WAYOWAYO offert (1 repas/mois pour 2)" }
+    5: "1 portion de samoussas offerte!",
+    6: "2 portions de samoussas offertes!",
+    7: "4 portions de samoussas offertes!",
+    8: "1 repas complet pour 2 offert (entrées + plats + desserts + boissons)",
+    9: "1 an de WAYOWAYO offert (1 repas pour 2 par mois pendant 1 an)"
   };
 
-  const rewardObj = rewardMap[level] || { short: "inconnu", full: "Récompense inconnue" };
-  const reward = rewardObj.short;
-  const fullReward = rewardObj.full;
-
-  const uniqueId = generateRandomId();
-  const code = `WY-${level}K-${uniqueId}-${generateSignature(uniqueId)}`; // ← signature partielle pour code
-
-  // Signature complète (comme côté Apps Script)
-  const dataToSign = `${code}:${fullReward}::${score}:${level}`;
+  const reward = rewardMap[level] || "Récompense inconnue";
+  const uniqueId = generateRandomId(); // déjà existant dans ton code
+  const dataToSign = `${level}:${uniqueId}::${reward}`;
   const signature = generateSignature(dataToSign);
+  const code = `WY-${level}K-${uniqueId}-${signature}`;
 
   const expiry = new Date();
   expiry.setDate(expiry.getDate() + 7);
   const expiryStr = expiry.toLocaleDateString('fr-FR');
 
-  return `email-form.html?code=${encodeURIComponent(code)}&reward=${encodeURIComponent(fullReward)}&expiry=${encodeURIComponent(expiryStr)}&score=${score}&level=${level}&sig=${signature}`;
+  return `email-form.html?code=${encodeURIComponent(code)}&reward=${encodeURIComponent(reward)}&expiry=${encodeURIComponent(expiryStr)}&score=${score}&level=${level}&sig=${signature}`;
 }
     
 // ✅ 3. Trouver et remplacer toute redirection comme :
