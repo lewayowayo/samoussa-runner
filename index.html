@@ -2741,7 +2741,9 @@ if (existingMiniButton) {
             gameTime = 0;
             
             // Réinitialiser les variables de difficulté
-            gameSpeed = isMobile ? 2.7 : 3; // Valeur initiale de gameSpeed
+            const deviceFactor = calculateScaleFactor();
+// Sur les petits écrans, réduire légèrement la vitesse initiale
+gameSpeed = isMobile ? (2.7 * (0.9 + deviceFactor * 0.1)) : 3;
             difficultyLevel = 1; // Valeur initiale de difficultyLevel
             minObstacleDistance = 350; // Valeur initiale de la distance entre obstacles
             
@@ -3015,7 +3017,12 @@ function createObstacle() {
             obstacle2.classList.add(obstacleType2);
             
                 // Facteur d'échelle basé sur la taille de l'écran
-            const spacingFactor = gameContainerWidth / 800;
+const baseSpacingFactor = gameContainerWidth / 800;
+const deviceFactor = calculateScaleFactor();
+// Si l'écran est plus petit que l'iPhone 15, augmenter légèrement l'espacement
+// Si l'écran est plus grand, le réduire légèrement
+const compensationFactor = deviceFactor < 1 ? (1 + (1 - deviceFactor) * 0.3) : (1 - (deviceFactor - 1) * 0.2);
+const spacingFactor = baseSpacingFactor * compensationFactor;
             
             // Calculer les distances de saut possibles avec la vitesse actuelle
             const jumpability = calculateJumpableDistance();
@@ -3283,16 +3290,57 @@ if (jumpStrategy === 'single') {
             scoreElement.textContent = score;
             
             // Paliers de difficulté
-            const difficultyThresholds = [
-                { score: 300, speed: isMobile ? 3.2 : 3.5, distance: 330, level: 2 },
-                { score: 600, speed: isMobile ? 3.7 : 4.0, distance: 300, level: 3 },
-                { score: 1000, speed: isMobile ? 4.2 : 4.5, distance: 280, level: 4 },
-                { score: 1500, speed: isMobile ? 4.7 : 5.0, distance: 260, level: 5 },
-                { score: 2000, speed: isMobile ? 5.2 : 5.5, distance: 240, level: 6 },
-                { score: 2500, speed: isMobile ? 5.7 : 6.0, distance: 220, level: 7 },
-                { score: 3000, speed: isMobile ? 6.2 : 6.5, distance: 200, level: 8 },
-                { score: 4000, speed: isMobile ? 6.7 : 7.0, distance: 180, level: 9 }
-            ];
+           const deviceFactor = calculateScaleFactor();
+const difficultyThresholds = [
+    { 
+        score: 300, 
+        speed: isMobile ? (3.2 * (0.9 + deviceFactor * 0.1)) : 3.5, 
+        distance: 330 * (deviceFactor < 1 ? (1 + (1 - deviceFactor) * 0.2) : 1), 
+        level: 2 
+    },
+    { 
+        score: 600, 
+        speed: isMobile ? (3.7 * (0.9 + deviceFactor * 0.1)) : 4.0, 
+        distance: 300 * (deviceFactor < 1 ? (1 + (1 - deviceFactor) * 0.2) : 1), 
+        level: 3 
+    },
+    { 
+        score: 1000, 
+        speed: isMobile ? (4.2 * (0.9 + deviceFactor * 0.1)) : 4.5, 
+        distance: 280 * (deviceFactor < 1 ? (1 + (1 - deviceFactor) * 0.2) : 1), 
+        level: 4 
+    },
+    { 
+        score: 1500, 
+        speed: isMobile ? (4.7 * (0.9 + deviceFactor * 0.1)) : 5.0, 
+        distance: 260 * (deviceFactor < 1 ? (1 + (1 - deviceFactor) * 0.2) : 1), 
+        level: 5 
+    },
+    { 
+        score: 2000, 
+        speed: isMobile ? (5.2 * (0.9 + deviceFactor * 0.1)) : 5.5, 
+        distance: 240 * (deviceFactor < 1 ? (1 + (1 - deviceFactor) * 0.2) : 1), 
+        level: 6 
+    },
+    { 
+        score: 2500, 
+        speed: isMobile ? (5.7 * (0.9 + deviceFactor * 0.1)) : 6.0, 
+        distance: 220 * (deviceFactor < 1 ? (1 + (1 - deviceFactor) * 0.2) : 1), 
+        level: 7 
+    },
+    { 
+        score: 3000, 
+        speed: isMobile ? (6.2 * (0.9 + deviceFactor * 0.1)) : 6.5, 
+        distance: 200 * (deviceFactor < 1 ? (1 + (1 - deviceFactor) * 0.2) : 1), 
+        level: 8 
+    },
+    { 
+        score: 4000, 
+        speed: isMobile ? (6.7 * (0.9 + deviceFactor * 0.1)) : 7.0, 
+        distance: 180 * (deviceFactor < 1 ? (1 + (1 - deviceFactor) * 0.2) : 1), 
+        level: 9 
+    }
+];
             
             // Augmenter la difficulté selon le score
             for (const threshold of difficultyThresholds) {
