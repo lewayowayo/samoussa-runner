@@ -2202,6 +2202,15 @@ let lastAnimationUpdateTime = 0;
 let lastDoubleObstacleTime = 0;
 // Temps de repos minimum entre deux groupes d'obstacles doubles (en millisecondes)
 let doubleObstacleRestPeriod = 4000;
+
+// Constante de référence pour l'iPhone 15
+const REFERENCE_WIDTH = 393; 
+
+// Fonction pour calculer le facteur d'échelle par rapport à la référence
+function calculateScaleFactor() {
+    const currentWidth = window.innerWidth;
+    return currentWidth / REFERENCE_WIDTH;
+}       
         
         // Variables pour le système de combo
         let comboMultiplier = 1;
