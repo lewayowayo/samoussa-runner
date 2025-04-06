@@ -5059,6 +5059,13 @@ window.addEventListener('resize', checkOrientation);
 
 function checkOrientation() {
     const warning = document.getElementById('landscape-warning');
+
+    // Ne pas afficher l'avertissement de rotation sur ordinateur ou tablette
+    if (!isMobile) {
+        warning.style.display = 'none';
+        return;
+    }
+    
     if (window.innerWidth > window.innerHeight) {
         warning.style.display = 'flex';
     } else {
