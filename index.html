@@ -54,44 +54,115 @@
             opacity: 0.8;
         }
         
-        /* Montagne estompée en arrière-plan - plus visible */
-        .montagne {
-            position: absolute;
-            width: 100%;
-            height: 25%;
-            bottom: 15%;
-            z-index: 1;
-            overflow: hidden;
-        }
+        /* Montagnes réunionnaises en arrière-plan */
+.montagne {
+    position: absolute;
+    width: 100%;
+    height: 30%;
+    bottom: 15%;
+    z-index: 1;
+    overflow: hidden;
+}
+
+/* Style commun pour les montagnes */
+.montagne-forme {
+    position: absolute;
+    bottom: 0;
+    background: linear-gradient(to bottom, 
+        rgba(62, 81, 91, 0.65) 0%, 
+        rgba(85, 98, 112, 0.5) 50%, 
+        rgba(130, 145, 160, 0.3) 100%);
+    overflow: hidden;
+}
+
+/* Piton des Neiges - montagne principale au centre */
+.montagne-forme-2 {
+    left: 25%;
+    width: 45%;
+    height: 90%;
+    clip-path: polygon(
+        0% 100%,    /* bas gauche */
+        20% 70%,    /* pente gauche */
+        35% 40%,    /* première crête */
+        50% 20%,    /* sommet principal */
+        65% 42%,    /* deuxième crête */
+        80% 65%,    /* pente droite */
+        100% 100%   /* bas droite */
+    );
+    z-index: 3;
+}
+
+/* Piton de la Fournaise - volcan à droite */
+.montagne-forme-3 {
+    left: 60%;
+    width: 35%;
+    height: 75%;
+    clip-path: polygon(
+        0% 100%,    /* bas gauche */
+        10% 80%,    /* pente gauche graduelle */
+        25% 50%,    /* première pente */
+        38% 30%,    /* plateau */
+        50% 15%,    /* sommet */
+        65% 35%,    /* cratère */
+        85% 75%,    /* pente droite */
+        100% 100%   /* bas droite */
+    );
+    z-index: 2;
+}
+
+/* Petite montagne à gauche - suggestion de Mafate */
+.montagne-forme-1 {
+    left: 0%;
+    width: 30%;
+    height: 65%;
+    clip-path: polygon(
+        0% 100%,    /* bas gauche */
+        15% 80%,    /* première pente */
+        30% 75%,    /* petit plateau */
+        45% 40%,    /* sommet */
+        70% 70%,    /* descente */
+        100% 100%   /* bas droite */
+    );
+    z-index: 1;
+}
+
+/* Effet d'ombre/brume pour donner de la profondeur */
+.montagne::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 30%;
+    bottom: 0;
+    background: linear-gradient(to top, 
+        rgba(219, 201, 190, 0.3) 0%, 
+        rgba(219, 201, 190, 0) 100%);
+    z-index: 4;
+}
+
+/* Effet de lave pour le Piton de la Fournaise */
+.montagne-forme-3::after {
+    content: '';
+    position: absolute;
+    width: 10%;
+    height: 10%;
+    top: 20%;
+    left: 50%;
+    background: radial-gradient(
+        rgba(255, 87, 34, 0.6) 0%,
+        rgba(255, 87, 34, 0) 70%
+    );
+    border-radius: 50%;
+    filter: blur(2px);
+    z-index: 3;
+    animation: glow 3s infinite alternate;
+}
+
+@keyframes glow {
+    0% { opacity: 0.4; }
+    100% { opacity: 0.7; }
+}
+
         
-        .montagne-forme {
-            position: absolute;
-            width: 300px;
-            height: 120px;
-            background: linear-gradient(to bottom, rgba(130, 145, 160, 0.5), rgba(130, 145, 160, 0));
-            border-radius: 50% 50% 0 0;
-            transform: scaleX(3);
-        }
-        
-        .montagne-forme-1 {
-            left: -5%;
-            bottom: 0;
-            height: 90px;
-        }
-        
-        .montagne-forme-2 {
-            left: 30%;
-            bottom: 0;
-            height: 110px;
-            opacity: 0.7;
-        }
-        
-        .montagne-forme-3 {
-            left: 65%;
-            bottom: 0;
-            height: 80px;
-            opacity: 0.8;
-        }
         
         /* Nuages décoratifs */
         .cloud {
