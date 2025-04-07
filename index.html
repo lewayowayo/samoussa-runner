@@ -1626,12 +1626,12 @@
         
         <div id="instructions">
     <p><strong>Tapez sur l'écran</strong> pour sauter</p>
-    <p>Maintenez appuyé pour sauter plus haut!</p>
+    <p>Maintenez appuyé pour sauter plus haut !</p>
 </div>
         <button class="btn" id="start-button">JOUER</button>
         <div class="restaurant-info">
             <p>Restaurant Créole Réunionnais WAYOWAYO</p>
-            <p>Venez déguster nos délicieux samoussas!</p>
+            <p>Venez déguster nos délicieux samoussas !</p>
         </div>
     </div>
     <div id="game-over" class="overlay-screen" style="display: none;">
@@ -1660,7 +1660,7 @@
     <button class="btn" id="restart-button">REJOUER</button>
     <div class="restaurant-info">
         <p>Restaurant Créole Réunionnais WAYOWAYO</p>
-        <p>Venez déguster nos délicieux samoussas!</p>
+        <p>Venez déguster nos délicieux samoussas !</p>
     </div> 
         
          <div style="margin-top: 10px; text-align: center; font-size: 12px;">
@@ -1680,7 +1680,7 @@
         <p>Veuillez y accéder depuis votre smartphone ou tablette pour jouer à Samoussa Runner.</p>
         <div class="restaurant-info">
             <p>Restaurant Créole Réunionnais WAYOWAYO</p>
-            <p>Venez déguster nos délicieux samoussas!</p>
+            <p>Venez déguster nos délicieux samoussas !</p>
         </div>
     </div>
 
@@ -1836,13 +1836,13 @@ function generateRewardQR(score, level) {
         rewardText = "1 repas complet pour 2 offert ! (entrées + plats + desserts + boissons)";
     } else if (level >= 7) {
         reward = "4_PORTIONS";
-        rewardText = "4 portions de samoussas offertes!";
+        rewardText = "4 portions de samoussas offertes !";
     } else if (level >= 6) {
         reward = "2_PORTIONS";
-        rewardText = "2 portions de samoussas offertes!";
+        rewardText = "2 portions de samoussas offertes !";
     } else if (level >= 5) {
         reward = "1_PORTION";
-        rewardText = "1 portion de samoussas offerte!";
+        rewardText = "1 portion de samoussas offerte !";
     } else {
         return null; // Aucune récompense pour niveaux inférieurs
     }
@@ -3901,7 +3901,7 @@ try {
             } else {
                 // Portion pour le niveau 5+ avec QR code
 rewardSection.innerHTML = `
-    <h3 class="reward-title">FÉLICITATIONS!</h3>
+    <h3 class="reward-title">FÉLICITATIONS !</h3>
     <p class="reward-text">Vous avez gagné:</p>
     <p class="reward-text"><strong>${qrResult.reward}</strong></p>
     <div class="qr-container">${qrResult.html || '<p>QR Code non disponible</p>'}</div>
@@ -4017,7 +4017,7 @@ setTimeout(() => {
                 <ol style="text-align: left; padding-left: 25px; margin-top: 5px;">
                     ${highScores.map(score => `<li>${score}</li>`).join('')}
                 </ol>
-                <p class="reward-text" style="margin-top: 15px;">Jouez encore pour gagner une récompense!</p>
+                <p class="reward-text" style="margin-top: 15px;">Jouez encore pour gagner une récompense !</p>
             `;
         }
     } else {
@@ -4027,7 +4027,7 @@ setTimeout(() => {
             <ol style="text-align: left; padding-left: 25px; margin-top: 5px;">
                 ${highScores.map(score => `<li>${score}</li>`).join('')}
             </ol>
-            <p class="reward-text" style="margin-top: 15px;">Atteignez le niveau 5 pour gagner une récompense!</p>
+            <p class="reward-text" style="margin-top: 15px;">Atteignez le niveau 5 pour gagner une récompense !</p>
         `;
     }
 } catch (generalError) {
@@ -4038,7 +4038,7 @@ setTimeout(() => {
         <ol style="text-align: left; padding-left: 25px; margin-top: 5px;">
             ${highScores.map(score => `<li>${score}</li>`).join('')}
         </ol>
-        <p class="reward-text" style="margin-top: 15px;">Jouez encore pour améliorer votre score!</p>
+        <p class="reward-text" style="margin-top: 15px;">Jouez encore pour améliorer votre score !</p>
     `;
 }
 
@@ -4156,7 +4156,7 @@ function updateHighScores() {
         
         // Fonction pour partager le score sur les réseaux sociaux ou par message
 function shareScore(platform) {
-    const shareText = `Je viens de faire ${score} points dans Samoussa Runner sur le site du restaurant WAYOWAYO! Niveau atteint: ${difficultyLevel}, Meilleur combo: x${maxCombo}. Venez battre mon record!`;
+    const shareText = `Je viens de faire ${score} points dans Samoussa Runner sur le site du restaurant WAYOWAYO ! Niveau atteint: ${difficultyLevel}, Meilleur combo: x${maxCombo}. Venez battre mon record !`;
     const shareUrl = 'https://samoussa.wayowayo.fr';
     let fullUrl = '';
     
