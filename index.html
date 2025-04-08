@@ -1688,6 +1688,42 @@
     </div>
 
     <script>
+
+// Vérifier si nous venons d'une redirection et forcer l'écran complet
+(function checkFullscreenParam() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('fullscreen')) {
+        // Réinitialiser le viewport
+        const meta = document.querySelector('meta[name="viewport"]');
+        if (meta) {
+            meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover';
+        }
+        
+        // S'assurer que le jeu prend tout l'espace
+        document.documentElement.style.height = '100%';
+        document.body.style.height = '100%';
+        document.body.style.margin = '0';
+        document.body.style.padding = '0';
+        
+        // Ajuster le conteneur du jeu
+        setTimeout(function() {
+            const gameContainer = document.getElementById('game-container');
+            if (gameContainer) {
+                gameContainer.style.maxWidth = 'none';
+                gameContainer.style.width = '100%';
+                gameContainer.style.height = '100vh';
+                
+                // Forcer une mise à jour de l'affichage
+                window.dispatchEvent(new Event('resize'));
+            }
+        }, 100);
+        
+        // Supprimer le paramètre de l'URL pour éviter les problèmes de partage
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+})();
+        
+        
        // Détection du type d'appareil
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
